@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Client Side Pagination in DataGrid - jQuery EasyUI Demo</title>
+
+</head>
+<body>
+	<div id="tb6" ></div>
+
+	<script type="text/javascript" th:inline="none">
+		var row6;
+
+		$('#tb6').datagrid({
+			border:false,
+			fit:true,
+			singleSelect:true,
+			pagination:true,
+			pageSize : 100,
+			pageList : [100,200,500],
+			remoteSort: false,
+			autoRowHeight:false,
+			url:'/getAppRpt',
+			method:'post',
+			toolbar: [{
+				text:'手动执行',
+				iconCls:'icon-sum',
+				handler:function(){
+					$.messager.show({
+						title:'提示',
+						msg:'手动请求生成Office全局可用性总览报告的请求已提交，完成的速度会根据全局的多少决定，完成时右下角会出现弹窗提醒',
+						timeout:2000,
+						showType:'slide'
+					}); 
+					$.ajax({
+						type : 'GET', 
+						url : '/getAppRptManaully',
+						success : function() {
+							$.messager.show({
+								title:'成功',
+								msg:'Office总览报告已生成',
+								timeout:3000,
+								showType:'slide'
+							});
+							$('#tb6').datagrid('reload');
+						},
+						error : function(){
+					       	$.messager.show({
+								title:'失败',
+								msg:'提交失败，请重试',
+								timeout:2000,
+								showType:'slide'
+							}); 
+						}
+					});
+				}
+			},{
+				text:'下载Exchange报告',
+				iconCls:'icon-outlook16',
+				handler:function(){
+					row6 = $('#tb6').datagrid('getSelections');
+					if(row6!=null&&row6.length==1){
+						window.location.href="/getExchangeRpt?seqNo="+row6[0].seqNo;
+					}
+					else{
+						$.messager.show({
+							title:'错误',
+							msg:'请选择一行',
+							timeout:2000,
+							showType:'slide'
+						});
+					}
+				}
+			},{
+				text:'下载Onedrive报告',
+				iconCls:'icon-od16',
+				handler:function(){
+					row6 = $('#tb6').datagrid('getSelections');
+					if(row6!=null&&row6.length==1){
+						window.location.href="/getOnedriveRpt?seqNo="+row6[0].seqNo;
+					}
+					else{
+						$.messager.show({
+							title:'错误',
+							msg:'请选择一行',
+							timeout:2000,
+							showType:'slide'
+						});
+					}
+				}
+			},{
+				text:'刷新',
+				iconCls:'icon-reload',
+				handler:function(){
+					$('#tb6').datagrid('reload');
+				}
+			},{
+				text:'帮助',
+				iconCls:'icon-help',
+				handler:function(){
+					$.messager.alert('帮助','系统会每2天随机扫描所有APP的管理员状态，并生成此可用性报告，此功能默认关闭，你可以在系统配置通过配置GEN_APP_RPT=Y来打开它并可以通过修改GEN_APP_RPT_CRON来重新定义时间<br>'+
+							'1.无颜色代表至少一个管理员存活<br>'+
+							'2.<font color=red>红色</font>代表全局无管理员或者无管理员存活<br>'+
+							'3.<font color="#A9A9A9">灰色</font>代表无效全局<br>'+
+							'4.<font color="#FFA500">橙色</font>代表SPO=0的全局<br>'+
+							'下载Exchange报告可以查看选中全局下所有用户30日内的Outlook使用状态<br>'+
+							'下载Onedrive报告可以查看选中全局下所有用户30日内的Onedrive使用状态','');
+				}
+			}],
+			columns : [[
+				{field : 'rptDt',title : '报告时间',align : 'center',sortable:true,
+					formatter: function(value,row,index){
+						if(value==null||value==''){
+							return '';
+						}
+						else{
+							var date = new Date(value);
+							// 格式化日期
+							dateTime = date.toLocaleString();
+							return dateFormat("YYYY-mm-dd HH:MM:SS", date);
+						}
+					}	
+				},
+				{field : 'tenantId',title : '租户ID',align : 'center',sortable:true},
+				{field : 'remarks',title : '备注',align : 'center',sortable:true},
+				{field : 'totalUser',title : '用户总数',align : 'center',sortable:true},
+				{field : 'totalGlobalAdmin',title : '总管理员数',align : 'center',sortable:true},
+				{field : 'enableGlobalAdmin',title : '可用管理员数',align : 'center',sortable:true},
+				{field : 'disableGloablAdmin',title : '不可用管理员数',align : 'center',sortable:true},
+				{field : 'spo',title : 'SPO',align : 'center',sortable:true}
+			]],
+            onLoadError: function (data){
+            	console.log(data);
+            	$.messager.alert('错误', data.responseText ,'error');
+				$('#tb6').datagrid('loadData',{'total':0,'rows':[]});
+            },
+			rowStyler:function(index,row){
+				if (row.spo=='不可用'){
+					return 'background-color:#FFA500';
+				}
+				if (row.enableGlobalAdmin=='0'){
+					return 'background-color:#FF3300';
+				}		
+				if (row.rptDt==null||row.rptDt==''){
+					return 'background-color:#A9A9A9';
+				}
+			}
+		});
+		
+		function dateFormat(fmt, date) {
+		    let ret;
+		    const opt = {
+		        "Y+": date.getFullYear().toString(),        // 年
+		        "m+": (date.getMonth() + 1).toString(),     // 月
+		        "d+": date.getDate().toString(),            // 日
+		        "H+": date.getHours().toString(),           // 时
+		        "M+": date.getMinutes().toString(),         // 分
+		        "S+": date.getSeconds().toString()          // 秒
+		        // 有其他格式化字符需求可以继续添加，必须转化成字符串
+		    };
+		    for (let k in opt) {
+		        ret = new RegExp("(" + k + ")").exec(fmt);
+		        if (ret) {
+		            fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+		        };
+		    };
+		    return fmt;
+		}
+		
+	</script>
+</body>
+</html>

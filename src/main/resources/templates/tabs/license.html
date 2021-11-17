@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Client Side Pagination in DataGrid - jQuery EasyUI Demo</title>
+
+</head>
+<body>
+	<div id="tb2" ></div>
+
+	<script type="text/javascript" th:inline="none">
+		$('#tb2').datagrid({
+			border:false,
+			fit:true,
+			singleSelect:true,
+			autoRowHeight:false,
+			remoteSort: false,
+			url:'/getLicense',
+			method:'post',
+			toolbar: [{
+				text:'刷新',
+				iconCls:'icon-reload',
+				handler:function(){
+					$('#tb2').datagrid('reload');
+				}
+			},{
+				text:'帮助',
+				iconCls:'icon-help',
+				handler:function(){
+					$.messager.alert('帮助','要查看订阅，请先在配置中选择一个有效的全局，当切换全局后，点击刷新可以查看新切换全局的订阅，如果此订阅无中文名称，你可以前往<a href=javascript:addPanel("系统配置")>系统配置</a>中添加你自己的中文翻译','');
+				}
+			}],
+			columns : [[
+				{field : 'capabilityStatus',title : '订阅状态',align : 'center',sortable:true,
+					formatter: function(value,row,index){
+						if(value=='Enabled'){
+							return "<font color='green'>可用</font>";
+						}
+						else{
+							return "<font color='red'>禁用</font>";
+						}
+					}
+				}, 
+				{field : 'skuId',title : 'SKUID',align : 'center',sortable:true}, 
+				{field : 'skuPartNumber',title : '名称',align : 'center',sortable:true}, 
+				{field : 'skuIdDesc',title : '中文名称',align : 'center',sortable:true}, 
+				{field : 'consumedUnits',title : '已分配',align : 'center',sortable:true}, 
+				{field : 'prepaidUnits',title : '总配额',align : 'center',sortable:true}
+			]],
+            onLoadError: function (data){
+            	console.log(data);
+            	$.messager.alert('错误', data.responseText ,'error');
+				$('#tb2').datagrid('loadData',{'total':0,'rows':[]});
+            }
+		});
+	</script>
+</body>
+</html>
