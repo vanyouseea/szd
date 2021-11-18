@@ -14,35 +14,33 @@
 		$('#tb6').datagrid({
 			border:false,
 			fit:true,
-			singleSelect:true,
+			singleSelect:false,
 			pagination:true,
 			pageSize : 100,
 			pageList : [100,200,500],
 			remoteSort: false,
 			autoRowHeight:false,
-			url:'/getAppRpt',
+			url:'/getDomain',
 			method:'post',
 			toolbar: [{
-				text:'手动执行',
-				iconCls:'icon-sum',
+				text:'从CF拉取',
+				iconCls:'icon-reload',
 				handler:function(){
-					$.messager.show({
-						title:'提示',
-						msg:'手动请求生成Office全局可用性总览报告的请求已提交，完成的速度会根据全局的多少决定，完成时右下角会出现弹窗提醒',
-						timeout:2000,
-						showType:'slide'
-					}); 
 					$.ajax({
 						type : 'GET', 
-						url : '/getAppRptManaully',
-						success : function() {
-							$.messager.show({
-								title:'成功',
-								msg:'Office总览报告已生成',
-								timeout:3000,
-								showType:'slide'
-							});
-							$('#tb6').datagrid('reload');
+						url : '/getDomainFromCf',
+						success : function(res) {
+							if(res==''){
+								$('#tb6').datagrid('reload');
+							}
+							else{
+								$.messager.show({
+									title:'失败',
+									msg:res,
+									timeout:3000,
+									showType:'slide'
+								});
+							}
 						},
 						error : function(){
 					       	$.messager.show({
@@ -53,6 +51,24 @@
 							}); 
 						}
 					});
+				}
+			},{
+				text:'刷新',
+				iconCls:'icon-reload',
+				handler:function(){
+					$('#tb6').datagrid('reload');
+				}
+			},{
+				text:'手动执行',
+				iconCls:'icon-sum',
+				handler:function(){
+					$.messager.show({
+						title:'提示',
+						msg:'手动请求生成Office全局可用性总览报告的请求已提交，完成的速度会根据全局的多少决定，完成时右下角会出现弹窗提醒',
+						timeout:2000,
+						showType:'slide'
+					}); 
+
 				}
 			},{
 				text:'下载Exchange报告',
@@ -89,12 +105,6 @@
 					}
 				}
 			},{
-				text:'刷新',
-				iconCls:'icon-reload',
-				handler:function(){
-					$('#tb6').datagrid('reload');
-				}
-			},{
 				text:'帮助',
 				iconCls:'icon-help',
 				handler:function(){
@@ -108,7 +118,23 @@
 				}
 			}],
 			columns : [[
-				{field : 'rptDt',title : '报告时间',align : 'center',sortable:true,
+				{field : 'ck',title : '选中',align : 'center',checkbox: true}, 
+				{field : 'shared',title : '已分享',align : 'center',sortable:true,
+					formatter: function(value,row,index){
+						if(value=='是'){
+							return "<font color='green'>"+value+"</font>";
+						}
+						else{
+							return "<font color='red'>"+value+"</font>";
+						}
+					}
+				},
+				{field : 'seqNo',title : '编号',align : 'center',sortable:true},
+				{field : 'subZoneId',title : '子域ID',align : 'center',sortable:true},
+				{field : 'subZone',title : '子域名',align : 'center',sortable:true},
+				{field : 'zoneId',title : '主域ID',align : 'center',sortable:true},
+				{field : 'zone',title : '主域名',align : 'center',sortable:true},
+				{field : 'createDt',title : '创建时间',align : 'center',sortable:true,
 					formatter: function(value,row,index){
 						if(value==null||value==''){
 							return '';
@@ -119,15 +145,8 @@
 							dateTime = date.toLocaleString();
 							return dateFormat("YYYY-mm-dd HH:MM:SS", date);
 						}
-					}	
-				},
-				{field : 'tenantId',title : '租户ID',align : 'center',sortable:true},
-				{field : 'remarks',title : '备注',align : 'center',sortable:true},
-				{field : 'totalUser',title : '用户总数',align : 'center',sortable:true},
-				{field : 'totalGlobalAdmin',title : '总管理员数',align : 'center',sortable:true},
-				{field : 'enableGlobalAdmin',title : '可用管理员数',align : 'center',sortable:true},
-				{field : 'disableGloablAdmin',title : '不可用管理员数',align : 'center',sortable:true},
-				{field : 'spo',title : 'SPO',align : 'center',sortable:true}
+					}
+				}
 			]],
             onLoadError: function (data){
             	console.log(data);
@@ -135,15 +154,7 @@
 				$('#tb6').datagrid('loadData',{'total':0,'rows':[]});
             },
 			rowStyler:function(index,row){
-				if (row.spo=='不可用'){
-					return 'background-color:#FFA500';
-				}
-				if (row.enableGlobalAdmin=='0'){
-					return 'background-color:#FF3300';
-				}		
-				if (row.rptDt==null||row.rptDt==''){
-					return 'background-color:#A9A9A9';
-				}
+
 			}
 		});
 		
