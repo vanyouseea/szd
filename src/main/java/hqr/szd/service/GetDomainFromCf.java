@@ -1,16 +1,27 @@
 package hqr.szd.service;
 
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Optional;
 
+import javax.net.ssl.SSLContext;
+
+import org.apache.http.HttpHost;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -35,7 +46,49 @@ public class GetDomainFromCf {
 	@Value("${UA}")
     private String ua;
 	
-	private RestTemplate restTemplate = new RestTemplate();
+	private RestTemplate restTemplate;
+	
+	public void initlRestTemplate() {
+		try {
+			SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
+				public boolean isTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+					return true;
+				}
+			}).build();
+			
+			SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext);
+			CloseableHttpClient httpClient;
+			
+			Optional<TaMasterCd> opt = tmc.findById("HTTP_PROXY");
+			if(opt.isPresent()) {
+				TaMasterCd enti = opt.get();
+				if("".equals( enti.getCd() ) ) {
+					httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
+				}
+				else {
+					try {
+						String proxy[] = enti.getCd().split(":");
+						httpClient = HttpClients.custom().setSSLSocketFactory(csf).setProxy(new HttpHost(proxy[0], Integer.parseInt(proxy[1]))).build();
+					}
+					catch (Exception e) {
+						System.out.println("invalid proxy "+enti.getCd());
+						httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
+					}
+				}
+			}
+			else {
+				httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
+			}
+
+			HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+
+			requestFactory.setHttpClient(httpClient);
+			restTemplate = new RestTemplate(requestFactory);
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public String initDomainInfo() {
 		//什么都不返回代表成功
@@ -48,6 +101,7 @@ public class GetDomainFromCf {
 			TaMasterCd en1 = opt1.get();
 			TaMasterCd en2 = opt2.get();
 			if(en1.getCd()!=null&&!"".equals(en1.getCd())&&en2.getCd()!=null&&!"".equals(en2.getCd())) {
+				initlRestTemplate();
 				sdr.deleteAll();
 				HashMap<String, Object> map = getZoneIds(en1.getCd(), en2.getCd());
 				String status = (String)map.get("status");
