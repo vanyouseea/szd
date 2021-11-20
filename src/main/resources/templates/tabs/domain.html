@@ -148,13 +148,10 @@
 				text:'帮助',
 				iconCls:'icon-help',
 				handler:function(){
-					$.messager.alert('帮助','系统会每2天随机扫描所有APP的管理员状态，并生成此可用性报告，此功能默认关闭，你可以在系统配置通过配置GEN_APP_RPT=Y来打开它并可以通过修改GEN_APP_RPT_CRON来重新定义时间<br>'+
-							'1.无颜色代表至少一个管理员存活<br>'+
-							'2.<font color=red>红色</font>代表全局无管理员或者无管理员存活<br>'+
-							'3.<font color="#A9A9A9">灰色</font>代表无效全局<br>'+
-							'4.<font color="#FFA500">橙色</font>代表SPO=0的全局<br>'+
-							'下载Exchange报告可以查看选中全局下所有用户30日内的Outlook使用状态<br>'+
-							'下载Onedrive报告可以查看选中全局下所有用户30日内的Onedrive使用状态','');
+					$.messager.alert('帮助','<font color=red>特别提示</font> CF不支持以API的方式设置免费域名(如.tk,.gq,.ml等)的二级域名<br>'+
+							'<b>从CF拉取</b> 在系统配置中设置好CF_AUTH_EMAIL和CF_AUTH_EMAIL后可以点击它来获取你在CF所有A类记录，一般只需要执行一次即可<br>'+
+							'<b>分享/取消</b> 表示分享/取消此子域名/域名给其他用户使用<br>'+
+							'<b>删除</b> 仅仅是删除在系统里面的A类记录，此改动不会影响到CF<br>','');
 				}
 			}],
 			columns : [[

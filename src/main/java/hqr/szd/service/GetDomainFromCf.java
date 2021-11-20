@@ -107,7 +107,7 @@ public class GetDomainFromCf {
 				String status = (String)map.get("status");
 				if("succ".equals(status)) {
 					ArrayList<String> list = (ArrayList<String>)map.get("res");
-					getSubZoneIds(list);
+					getSubZoneIds(list, en1.getCd(), en2.getCd());
 				}
 				else {
 					res = (String)map.get("res");
@@ -175,8 +175,52 @@ public class GetDomainFromCf {
 		return map;
 	}
 	
-	private void getSubZoneIds(ArrayList<String> list) {
-		System.out.println("Go here");
+	private void getSubZoneIds(ArrayList<String> list, String cfAuthEmail, String cfAuthKey) {
+		for(String zoneId: list) {
+			String endpoint = "https://api.cloudflare.com/client/v4/zones/"+zoneId+"/dns_records";
+			HttpHeaders headers = new HttpHeaders();
+			headers.set(HttpHeaders.USER_AGENT, ua);
+			headers.add("X-Auth-Email", cfAuthEmail);
+			headers.add("X-Auth-Key", cfAuthKey);
+			headers.add("Content-Type", "application/json");
+			String body="";
+			HttpEntity<String> requestEntity = new HttpEntity<String>(body, headers);
+			try {
+				ResponseEntity<String> response= restTemplate.exchange(endpoint, HttpMethod.GET, requestEntity, String.class);
+				JSONObject jo = JSON.parseObject(response.getBody());
+				boolean flag = jo.getBoolean("success");
+				if(flag) {
+					JSONArray ja = jo.getJSONArray("result");
+					for (Object obj : ja) {
+						JSONObject jb = (JSONObject)obj;
+						String subZoneId = jb.getString("id");
+						String zoneName = jb.getString("zone_name");
+						String subZoneName = jb.getString("name");
+						String type = jb.getString("type");
+						//只拉取A类
+						if("A".equals(type)) {
+							//only save the subzonename becuase already save to DB before
+							if(!zoneName.equals(subZoneName)) {
+								SzdDomain enti = new SzdDomain();
+								enti.setSubZone(subZoneName);
+								enti.setSubZoneId(subZoneId);
+								enti.setZone(zoneName);
+								enti.setZoneId(zoneId);
+								enti.setCreateDt(new Date());
+								sdr.saveAndFlush(enti);
+							}
+						}
+					}
+				}
+				else {
+					JSONArray ja = jo.getJSONArray("errors");
+					System.out.println("Fail to get subzone:"+ja);
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 }
