@@ -20,22 +20,6 @@
 			<td colSpan="2"><input id="endDt" class="easyui-datebox"  data-options="formatter:myformatter" style="width: 310px" ></td>
 		</tr>
 		<tr>
-			<td >后缀：</td>
-			<td colSpan="2">
-				<input id="cc4" name="dept" value="Loading..." style="width: 310px">
-			</td>
-		</tr>
-		<tr>
-			<td >订阅：</td>
-			<td colSpan="2" id="licenseTd" >
-				<div th:each="list : ${session.licenseVo}" style="font-size: 12px">
-					<span th:if="${list.capabilityStatus} eq 'Enabled'">
-						<input class="easyui-checkbox" name="checkbox3" th:value="${list.skuId}" th:label="${list.skuIdDesc}" labelWidth="290px" ><br>
-					</span>
-				</div>
-			</td>
-		</tr>
-		<tr>
 			<td colspan="3" align="right">
 				<a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()" style="width:80px">确认</a>
 				<a href="javascript:void(0)" class="easyui-linkbutton" onclick="clearForm()" style="width:80px">取消</a>
@@ -50,21 +34,13 @@
 			var d = date.getDate();
 			return y+'-'+(m<10?('0'+m):m)+'-'+(d<10?('0'+d):d);
 		}
-	
-		$('#cc4').combobox({
-		    url:'/getDomains',
-		    valueField:'id',
-		    textField:'text',
-		    editable: false
-		});
-		
+
 		function submitForm(){
-			var domain = $('#cc4').combobox('getText');
 			var count2 = $('#count2').val();
 			var startDt = $('#startDt').val();
 			var endDt = $('#endDt').val();
 			
-			console.log('info:'+domain+','+count2+","+startDt+","+endDt);
+			console.log('info:'+count2+","+startDt+","+endDt);
 			
 			if(count2==''){
 		      	$.messager.show({
@@ -76,26 +52,11 @@
 		      	$('#dlg7').dialog('close');
 				return;
 			}
-			
-			var licenses2 = "";
-			$('input:checkbox[name=checkbox3]:checked').each(function(i){
-				if(0==i){
-					licenses2 = $(this).val();
-				}else{
-					licenses2 += (","+$(this).val());
-				}
-			});
-			if(licenses2==null){
-				console.log('未分配订阅');
-			}
-			else{
-				console.log('分配订阅为 '+licenses2);
-			}
 
 			$.ajax({
 			    type : "POST", 
 			    url : "/massCreateInviteCd",
-			    data : { "count": count2, "domain":domain , "licenses": licenses2, "startDt": startDt, "endDt": endDt },
+			    data : { "count": count2, "startDt": startDt, "endDt": endDt },
 			    success : function(result) {
 			      	$.messager.show({
 						title:'结果',

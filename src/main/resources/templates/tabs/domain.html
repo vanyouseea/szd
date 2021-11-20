@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Client Side Pagination in DataGrid - jQuery EasyUI Demo</title>
+
+</head>
+<body>
+	<div id="tb6" ></div>
+
+	<script type="text/javascript" th:inline="none">
+		var row6;
+
+		$('#tb6').datagrid({
+			border:false,
+			fit:true,
+			singleSelect:false,
+			pagination:true,
+			pageSize : 100,
+			pageList : [100,200,500],
+			remoteSort: false,
+			autoRowHeight:false,
+			url:'/getDomain',
+			method:'post',
+			toolbar: [{
+				text:'从CF拉取',
+				iconCls:'icon-reload',
+				handler:function(){
+					$.ajax({
+						type : 'GET', 
+						url : '/getDomainFromCf',
+						success : function(res) {
+							if(res==''){
+								$('#tb6').datagrid('reload');
+							}
+							else{
+								$.messager.show({
+									title:'失败',
+									msg:res,
+									timeout:3000,
+									showType:'slide'
+								});
+							}
+						},
+						error : function(){
+					       	$.messager.show({
+								title:'失败',
+								msg:'提交失败，请重试',
+								timeout:2000,
+								showType:'slide'
+							}); 
+						}
+					});
+				}
+			},{
+				text:'刷新',
+				iconCls:'icon-reload',
+				handler:function(){
+					$('#tb6').datagrid('reload');
+				}
+			},{
+				text:'分享/取消',
+				iconCls:'icon-sum',
+				handler:function(){
+					row = $('#tb6').datagrid('getSelections');
+					if(row!=null&&row.length>0){
+						var seqNos = '';
+						for(var rr of row){
+							seqNos = seqNos + rr.seqNo + ',';
+						}
+						$.ajax({
+						    type : "POST", 
+						    url : "/updateDomain",
+						    data : { "seqNos": seqNos },
+						    success : function() {
+						    	$.messager.show({
+									title:'提示',
+									msg: '操作成功',
+									timeout:2000,
+									showType:'slide'
+								});
+						      	$('#tb6').datagrid('reload');
+							},
+							error : function(){
+						       	$.messager.show({
+									title:'失败',
+									msg:'更新配置失败，请重试',
+									timeout:2000,
+									showType:'slide'
+								}); 
+							}
+					    });
+						row = null;
+					}
+					else{
+						$.messager.show({
+							title:'错误',
+							msg:'请选择至少一行',
+							timeout:2000,
+							showType:'slide'
+						});
+					}					
+				}
+			},{
+				text:'删除',
+				iconCls:'icon-sum',
+				handler:function(){
+					row = $('#tb6').datagrid('getSelections');
+					if(row!=null&&row.length>0){
+						var seqNos = '';
+						for(var rr of row){
+							seqNos = seqNos + rr.seqNo + ',';
+						}
+						$.ajax({
+						    type : "POST", 
+						    url : "/deleteDomain",
+						    data : { "seqNos": seqNos },
+						    success : function() {
+						    	$.messager.show({
+									title:'提示',
+									msg: '操作成功',
+									timeout:2000,
+									showType:'slide'
+								});
+						      	$('#tb6').datagrid('reload');
+							},
+							error : function(){
+						       	$.messager.show({
+									title:'失败',
+									msg:'删除配置失败，请重试',
+									timeout:2000,
+									showType:'slide'
+								}); 
+							}
+					    });
+						row = null;
+					}
+					else{
+						$.messager.show({
+							title:'错误',
+							msg:'请选择至少一行',
+							timeout:2000,
+							showType:'slide'
+						});
+					}					
+				}
+			},{
+				text:'帮助',
+				iconCls:'icon-help',
+				handler:function(){
+					$.messager.alert('帮助','<font color=red>特别提示</font> CF不支持以API的方式设置免费域名(如.tk,.gq,.ml等)的二级域名<br>'+
+							'<b>从CF拉取</b> 在系统配置中设置好CF_AUTH_EMAIL和CF_AUTH_EMAIL后可以点击它来获取你在CF所有A类记录，一般只需要执行一次即可<br>'+
+							'<b>分享/取消</b> 表示分享/取消此子域名/域名给其他用户使用<br>'+
+							'<b>删除</b> 仅仅是删除在系统里面的A类记录，此改动不会影响到CF<br>','');
+				}
+			}],
+			columns : [[
+				{field : 'ck',title : '选中',align : 'center',checkbox: true}, 
+				{field : 'shared',title : '已分享',align : 'center',sortable:true,
+					formatter: function(value,row,index){
+						if(value=='是'){
+							return "<font color='green'>"+value+"</font>";
+						}
+						else{
+							return "<font color='red'>"+value+"</font>";
+						}
+					}
+				},
+				{field : 'seqNo',title : '编号',align : 'center',sortable:true},
+				{field : 'subZoneId',title : '子域ID',align : 'center',sortable:true},
+				{field : 'subZone',title : '子域名',align : 'center',sortable:true},
+				{field : 'zoneId',title : '主域ID',align : 'center',sortable:true},
+				{field : 'zone',title : '主域名',align : 'center',sortable:true},
+				{field : 'createDt',title : '创建时间',align : 'center',sortable:true,
+					formatter: function(value,row,index){
+						if(value==null||value==''){
+							return '';
+						}
+						else{
+							var date = new Date(value);
+							// 格式化日期
+							dateTime = date.toLocaleString();
+							return dateFormat("YYYY-mm-dd HH:MM:SS", date);
+						}
+					}
+				}
+			]],
+            onLoadError: function (data){
+            	console.log(data);
+            	$.messager.alert('错误', data.responseText ,'error');
+				$('#tb6').datagrid('loadData',{'total':0,'rows':[]});
+            },
+			rowStyler:function(index,row){
+
+			}
+		});
+		
+		function dateFormat(fmt, date) {
+		    let ret;
+		    const opt = {
+		        "Y+": date.getFullYear().toString(),        // 年
+		        "m+": (date.getMonth() + 1).toString(),     // 月
+		        "d+": date.getDate().toString(),            // 日
+		        "H+": date.getHours().toString(),           // 时
+		        "M+": date.getMinutes().toString(),         // 分
+		        "S+": date.getSeconds().toString()          // 秒
+		        // 有其他格式化字符需求可以继续添加，必须转化成字符串
+		    };
+		    for (let k in opt) {
+		        ret = new RegExp("(" + k + ")").exec(fmt);
+		        if (ret) {
+		            fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+		        };
+		    };
+		    return fmt;
+		}
+		
+	</script>
+</body>
+</html>
