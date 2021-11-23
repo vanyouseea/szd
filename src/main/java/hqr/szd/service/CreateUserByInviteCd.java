@@ -55,6 +55,7 @@ public class CreateUserByInviteCd {
 					TaUser enti = new TaUser();
 					enti.setUserId(userId);
 					enti.setPasswd(password);
+					enti.setAcctRole("1");
 					tur.saveAndFlush(enti);
 					tiiDo.setResult(userId);
 					tiiDo.setInviteStatus("3");
