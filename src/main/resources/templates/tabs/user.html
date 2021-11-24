@@ -27,18 +27,6 @@
 			url:'/getUsers',
 			method:'post',
 			toolbar: [{
-				text:'添加',
-				iconCls:'icon-add',
-				handler:function(){
-					$('#dlg3').dialog('open');
-				}
-			},{
-				text:'批量创建',
-				iconCls:'icon-massadd',
-				handler:function(){
-					$('#dlg5').dialog('open');
-				}
-			},{
 				text:'删除',
 				iconCls:'icon-remove',
 				handler:function(){
@@ -236,7 +224,9 @@
 							return value;
 						}
 					}
-				}
+				},
+				{field : 'curSubDomain',title : '当前子域个数',align : 'center',sortable:true},
+				{field : 'maxSubDomain',title : '最大子域个数',align : 'center',sortable:true},
 			]],
             onLoadError: function (data){
             	console.log(data);

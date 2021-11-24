@@ -22,7 +22,7 @@ public class GetUserDomainMapInfo {
     private String ua;
 	
 	@Cacheable(value="cacheInviteInfo")
-	public String getUsers(int intPage, int intRows) {
+	public String getUserDnsRecords(int intPage, int intRows) {
 		long total = repo.count();
 		List<SzdUserDomainMap> rows = new ArrayList<SzdUserDomainMap>();
 		if(total>0) {

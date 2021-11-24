@@ -17,9 +17,15 @@
 	</div>
 	<div data-options="region:'west',split:true,title:'管理'" style="width:260px;padding:2px;">
 		<div id="aa" class="easyui-accordion" style="width:100%;height:220px;">
+		    <div title="我的"  style="overflow:auto">
+		    	<ul class="easyui-tree">
+					<li><div onclick="addPanel('可用域名')">可用域名</div></li>
+				</ul>
+		    </div>		    
 		    <div title="用户"  style="overflow:auto">
 		    	<ul class="easyui-tree">
 					<li><div onclick="addPanel('管理用户')">管理用户</div></li>
+					<li><div onclick="addPanel('管理用户域名')">管理用户域名</div></li>
 					<li><div onclick="addPanel('邀请注册')">邀请注册</div></li>
 				</ul>
 		    </div>
@@ -117,10 +123,10 @@
 						closable: true
 					});
 				}
-				else if(name=='Cloudflare配置'){
+				else if(name=='管理用户域名'){
 					$('#acc').tabs('add',{
 						title: name,
-						href: 'tabs/config.html',
+						href: 'tabs/userdomain.html',
 						//content: '<div style="padding:10px">Content</div>',
 						closable: true
 					});
@@ -137,6 +143,14 @@
 					$('#acc').tabs('add',{
 						title: name,
 						href: 'tabs/domain.html',
+						//content: '<div style="padding:10px">Content</div>',
+						closable: true
+					});
+				}
+				else if(name=='可用域名'){
+					$('#acc').tabs('add',{
+						title: name,
+						href: 'tabs/sharedomain.html',
 						//content: '<div style="padding:10px">Content</div>',
 						closable: true
 					});

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Client Side Pagination in DataGrid - jQuery EasyUI Demo</title>
+
+</head>
+<body>
+	<div id="tb8" ></div>
+
+	<script type="text/javascript" th:inline="none">
+		var row8;
+
+		$('#tb8').datagrid({
+			border:false,
+			fit:true,
+			singleSelect:true,
+			pagination:true,
+			pageSize : 100,
+			pageList : [100,200,500],
+			remoteSort: false,
+			autoRowHeight:false,
+			url:'/getSharedDomain',
+			method:'post',
+			toolbar: [{
+				text:'刷新',
+				iconCls:'icon-reload',
+				handler:function(){
+					$('#tb8').datagrid('reload');
+				}
+			},{
+				text:'新增',
+				iconCls:'icon-sum',
+				handler:function(){
+					row8 = $('#tb8').datagrid('getSelections');
+					if(row8!=null&&row8.length>0){
+						$.messager.alert('信息','New'+row8[0].seqNo,'');
+						row8 = null;
+					}
+					else{
+						$.messager.show({
+							title:'错误',
+							msg:'请选择至少一行',
+							timeout:2000,
+							showType:'slide'
+						});
+					}					
+				}
+			},{
+				text:'修改',
+				iconCls:'icon-sum',
+				handler:function(){
+					row8 = $('#tb8').datagrid('getSelections');
+					if(row8!=null&&row8.length>0){
+						$.messager.alert('信息','update'+row8[0].seqNo,'');
+						row8 = null;
+					}
+					else{
+						$.messager.show({
+							title:'错误',
+							msg:'请选择至少一行',
+							timeout:2000,
+							showType:'slide'
+						});
+					}					
+				}
+			},{
+				text:'帮助',
+				iconCls:'icon-help',
+				handler:function(){
+					$.messager.alert('帮助','<font color=red>特别提示</font> CF不支持以API的方式设置免费域名(如.tk,.gq,.ml等)的二级域名<br>'+
+							'<b>从CF拉取</b> 在系统配置中设置好CF_AUTH_EMAIL和CF_AUTH_EMAIL后可以点击它来获取你在CF所有A类记录，一般只需要执行一次即可<br>'+
+							'<b>分享/取消</b> 表示分享/取消此子域名/域名给其他用户使用<br>'+
+							'<b>删除</b> 仅仅是删除在系统里面的A类记录，此改动不会影响到CF<br>','');
+				}
+			}],
+			columns : [[
+				{field : 'ck',title : '选中',align : 'center',checkbox: true}, 
+				{field : 'seqNo',title : '编号',align : 'center',sortable:true},
+				{field : 'subZone',title : '子域名',align : 'center',sortable:true},
+				{field : 'zone',title : '主域名',align : 'center',sortable:true}
+			]],
+            onLoadError: function (data){
+            	console.log(data);
+            	$.messager.alert('错误', data.responseText ,'error');
+				$('#tb8').datagrid('loadData',{'total':0,'rows':[]});
+            },
+			rowStyler:function(index,row){
+
+			}
+		});
+		
+	</script>
+</body>
+</html>

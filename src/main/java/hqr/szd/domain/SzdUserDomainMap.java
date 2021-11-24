@@ -1,5 +1,7 @@
 package hqr.szd.domain;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,6 +23,7 @@ public class SzdUserDomainMap {
 	 * 1 - true
 	 */
 	private int proxied = 0;
+	private Date createDt;
 	public int getSeqNo() {
 		return seqNo;
 	}
@@ -62,5 +65,11 @@ public class SzdUserDomainMap {
 	}
 	public void setProxied(int proxied) {
 		this.proxied = proxied;
+	}
+	public Date getCreateDt() {
+		return createDt;
+	}
+	public void setCreateDt(Date createDt) {
+		this.createDt = createDt;
 	}
 }

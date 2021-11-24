@@ -62,10 +62,10 @@
 				text:'分享/取消',
 				iconCls:'icon-sum',
 				handler:function(){
-					row = $('#tb6').datagrid('getSelections');
-					if(row!=null&&row.length>0){
+					row6 = $('#tb6').datagrid('getSelections');
+					if(row6!=null&&row6.length>0){
 						var seqNos = '';
-						for(var rr of row){
+						for(var rr of row6){
 							seqNos = seqNos + rr.seqNo + ',';
 						}
 						$.ajax({
@@ -90,7 +90,7 @@
 								}); 
 							}
 					    });
-						row = null;
+						row6 = null;
 					}
 					else{
 						$.messager.show({
@@ -105,10 +105,10 @@
 				text:'删除',
 				iconCls:'icon-sum',
 				handler:function(){
-					row = $('#tb6').datagrid('getSelections');
-					if(row!=null&&row.length>0){
+					row6 = $('#tb6').datagrid('getSelections');
+					if(row6!=null&&row6.length>0){
 						var seqNos = '';
-						for(var rr of row){
+						for(var rr of row6){
 							seqNos = seqNos + rr.seqNo + ',';
 						}
 						$.ajax({
@@ -133,7 +133,7 @@
 								}); 
 							}
 					    });
-						row = null;
+						row6 = null;
 					}
 					else{
 						$.messager.show({
