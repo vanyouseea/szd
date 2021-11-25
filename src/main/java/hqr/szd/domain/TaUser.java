@@ -17,6 +17,18 @@ public class TaUser {
 	private String passwd;
 	private String cfAuthEmail;
 	private String cfAuthKey;
+	/*
+	 * 9 - ADMIN
+	 * 1 - NORMAL
+	 */
+	private String acctRole;
+	/*
+	 * 0 - disabled
+	 * 1 - active
+	 */
+	private int acctStatus = 1;
+	private int curSubDomain = 0;
+	private int maxSubDomain = 1;
 	public int getSeqNo() {
 		return seqNo;
 	}
@@ -46,5 +58,29 @@ public class TaUser {
 	}
 	public void setCfAuthKey(String cfAuthKey) {
 		this.cfAuthKey = cfAuthKey;
+	}
+	public String getAcctRole() {
+		return acctRole;
+	}
+	public void setAcctRole(String acctRole) {
+		this.acctRole = acctRole;
+	}
+	public int getAcctStatus() {
+		return acctStatus;
+	}
+	public void setAcctStatus(int acctStatus) {
+		this.acctStatus = acctStatus;
+	}
+	public int getCurSubDomain() {
+		return curSubDomain;
+	}
+	public void setCurSubDomain(int curSubDomain) {
+		this.curSubDomain = curSubDomain;
+	}
+	public int getMaxSubDomain() {
+		return maxSubDomain;
+	}
+	public void setMaxSubDomain(int maxSubDomain) {
+		this.maxSubDomain = maxSubDomain;
 	}
 }

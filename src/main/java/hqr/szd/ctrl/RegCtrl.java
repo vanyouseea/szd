@@ -27,6 +27,7 @@ public class RegCtrl {
 			TaUser user = new TaUser();
 			user.setUserId(userid);
 			user.setPasswd(pwd);
+			user.setAcctRole("9");
 			su.save(user);
 		}
 		else {

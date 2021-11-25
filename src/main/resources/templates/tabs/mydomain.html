@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Client Side Pagination in DataGrid - jQuery EasyUI Demo</title>
+
+</head>
+<body>
+	<div id="tb10" ></div>
+	<div id="dlg10"></div>
+	<script type="text/javascript" th:inline="none">
+		var row;
+		$('#tb10').datagrid({
+			border:false,
+			fit:true,
+			striped:true,
+			rownumbers : true,
+			//singleSelect:true,
+			autoRowHeight:false,
+			pagination:true,
+			pageSize : 100,
+			pageList : [100,200,500],
+			remoteSort: false,
+			url:'/getMyDomains',
+			method:'post',
+			toolbar: [{
+				text:'删除',
+				iconCls:'icon-remove',
+				handler:function(){
+					row = $('#tb10').datagrid('getSelections');
+					if(row!=null&&row.length>0){
+						var seqNos = '';
+						for(var rr of row){
+							seqNos = seqNos + rr.seqNo + ',';
+						}
+						$.messager.confirm('删除解析', '将删除'+row.length+'条CF解析但这并<font color=red>不会减少</font>你持有的子域数量，你确定吗', function(r){
+							if (r){
+								$.ajax({
+								    type : "POST", 
+								    url : "/deleteMyDnsRecords",
+								    data : { "seqNos": seqNos },
+								    success : function() {
+								       	$.messager.show({
+											title:'删除解析',
+											msg: '删除已完成',
+											timeout:3000,
+											showType:'slide'
+										}); 
+								       	$('#tb10').datagrid('reload');
+								    },
+									error : function(e){
+								       	$.messager.show({
+											title:'删除解析',
+											msg:'删除解析失败，这可能是由于服务器出现问题引起的 '+e,
+											timeout:2000,
+											showType:'slide'
+										}); 
+									}
+								});
+							}
+						});
+						row = null;
+					}
+					else{
+						$.messager.show({
+							title:'错误',
+							msg:'请至少选择一行',
+							timeout:2000,
+							showType:'slide'
+						});
+					}
+				}
+			},{
+				text:'刷新',
+				iconCls:'icon-reload',
+				handler:function(){
+					$('#tb10').datagrid('reload');
+				}
+			},'-',{
+				text:'帮助',
+				iconCls:'icon-help',
+				handler:function(){
+					$.messager.alert('帮助','<b>删除</b>本地记录的同时也会同时删除对应CF的解析','');
+				}
+			}],
+			columns : [[
+				{field : 'ck',title : '选中',align : 'center',checkbox: true}, 
+				{field : 'seqNo',title : '编号',align : 'center',sortable:true},
+				{field : 'userSeqNo',title : '用户编号',align : 'center',sortable:true},
+				{field : 'domainSeqNo',title : '域名编号',align : 'center',sortable:true},
+				{field : 'type',title : '类型',align : 'center',sortable:true},
+				{field : 'prefix',title : '前缀',align : 'center',sortable:true},
+				{field : 'ip',title : 'IP',align : 'center',sortable:true},
+				{field : 'proxied',title : '代理',align : 'center',sortable:true,
+					formatter: function(value,row,index){
+						if(value==0){
+							return "否";
+						}
+						else{
+							return "是";
+						}
+					}	
+				},
+				{field : 'createDt',title : '创建时间',align : 'center',sortable:true,
+					formatter: function(value,row,index){
+						if(value==null||value==''){
+							return '';
+						}
+						else{
+							var date = new Date(value);
+							// 格式化日期
+							dateTime = date.toLocaleString();
+							return dateFormat("YYYY-mm-dd HH:MM:SS", date);
+						}
+					}	
+				}
+			]],
+            onLoadError: function (data){
+            	console.log(data);
+            	$.messager.alert('错误', data.responseText ,'error');
+				$('#tb10').datagrid('loadData',{'total':0,'rows':[]});
+            }
+		});
+		
+		function dateFormat(fmt, date) {
+		    let ret;
+		    const opt = {
+		        "Y+": date.getFullYear().toString(),        // 年
+		        "m+": (date.getMonth() + 1).toString(),     // 月
+		        "d+": date.getDate().toString(),            // 日
+		        "H+": date.getHours().toString(),           // 时
+		        "M+": date.getMinutes().toString(),         // 分
+		        "S+": date.getSeconds().toString()          // 秒
+		        // 有其他格式化字符需求可以继续添加，必须转化成字符串
+		    };
+		    for (let k in opt) {
+		        ret = new RegExp("(" + k + ")").exec(fmt);
+		        if (ret) {
+		            fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+		        };
+		    };
+		    return fmt;
+		}
+		
+	</script>
+</body>
+</html>

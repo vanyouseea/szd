@@ -13,7 +13,7 @@ import hqr.szd.dao.SzdDomainRepo;
 import hqr.szd.domain.SzdDomain;
 
 @Service
-public class GetDomain {
+public class GetSharedDomain {
 	@Autowired
 	private SzdDomainRepo sdr;
 	
@@ -21,7 +21,7 @@ public class GetDomain {
 		long total = sdr.count();
 		List<SzdDomain> rows = new ArrayList<SzdDomain>();
 		if(total>0) {
-			rows = sdr.getDomains(intRows * (intPage - 1), intRows * intPage );
+			rows = sdr.getSharedDomains(intRows * (intPage - 1), intRows * intPage );
 		}
 		
 		HashMap map = new HashMap();

@@ -4,13 +4,18 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import hqr.szd.domain.SzdDomain;
 
-
+@Repository
 public interface SzdDomainRepo extends JpaRepository<SzdDomain, Integer> {
 	
 	@Query(value="select seq_no,shared,sub_zone_id,sub_zone,zone_id,zone,create_dt from (select A.*, rownum ro from (select * from szd_domain) A  where rownum<= :endRow ) where ro>:startRow ", nativeQuery = true)
-	List<SzdDomain> getSysRpt(int startRow, int endRow);
+	List<SzdDomain> getDomains(int startRow, int endRow);
+	
+	
+	@Query(value="select seq_no,shared,sub_zone_id,sub_zone,zone_id,zone,create_dt from (select A.*, rownum ro from (select * from szd_domain where shared='是') A  where rownum<= :endRow ) where ro>:startRow ", nativeQuery = true)
+	List<SzdDomain> getSharedDomains(int startRow, int endRow);
 	
 }

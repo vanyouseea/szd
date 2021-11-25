@@ -8,31 +8,10 @@
 <body>
 	<div id="tb3"></div>
 	<div id="dlg3"></div>
-	<div id="dlg5"></div>
 	
 	<script type="text/javascript" th:inline="none">
 		var row3;
-		//create user dialog
-		$('#dlg3').dialog({
-		    title: '新建用户',
-			iconCls: 'icon-add',
-			modal : true,
-			closed : true,
-			width: 420,
-			height: 290,
-		    cache: false,
-		    href: 'tabs/dialogs/createUser.html'
-		});
-		$('#dlg5').dialog({
-		    title: '批量新建用户',
-			iconCls: 'icon-massadd',
-			modal : true,
-			closed : true,
-			width: 420,
-			height: 360,
-		    cache: false,
-		    href: 'tabs/dialogs/massCreateUser.html'
-		});
+
 		$('#tb3').datagrid({
 			border:false,
 			fit:true,
@@ -44,21 +23,9 @@
 			pageSize : 100,
 			pageList : [100,200,500],
 			remoteSort: false,
-			url:'/getOfficeUser',
+			url:'/getUsers',
 			method:'post',
 			toolbar: [{
-				text:'添加',
-				iconCls:'icon-add',
-				handler:function(){
-					$('#dlg3').dialog('open');
-				}
-			},{
-				text:'批量创建',
-				iconCls:'icon-massadd',
-				handler:function(){
-					$('#dlg5').dialog('open');
-				}
-			},{
 				text:'删除',
 				iconCls:'icon-remove',
 				handler:function(){
@@ -218,135 +185,6 @@
 					}
 				}
 			},{
-				text:'提权',
-				iconCls:'icon-medal',
-				handler:function(){
-					row3 = $('#tb3').datagrid('getSelections');
-					if(row3!=null&&row3.length==1){
-						var id = row3[0].id;
-						var action = "P";
-						
-						$.ajax({
-						    type : "POST", 
-						    url : "/updateOfficeUserRole",
-						    data : { "uid": id , "action" : action},
-						    success : function(result) {
-								if(result){
-							       	$.messager.show({
-										title:'提示',
-										msg:'成功将此用户设为管理员',
-										timeout:2000,
-										showType:'slide'
-									}); 
-							       	$('#tb3').datagrid('reload');
-								}
-								else{
-							       	$.messager.show({
-										title:'提示',
-										msg:'提权失败',
-										timeout:2000,
-										showType:'slide'
-									}); 
-								}
-							},
-							error : function(){
-						       	$.messager.show({
-									title:'失败',
-									msg:'提权失败，这可能是由于服务器出现问题引起的',
-									timeout:2000,
-									showType:'slide'
-								}); 
-							}							
-						});
-						row3 = null;
-					}
-					else{
-						$.messager.show({
-							title:'错误',
-							msg:'请选择一行',
-							timeout:2000,
-							showType:'slide'
-						});
-					}
-				}
-			},{
-				text:'撤权',
-				iconCls:'icon-warning',
-				handler:function(){
-					row3 = $('#tb3').datagrid('getSelections');
-					if(row3!=null&&row3.length==1){
-						var id = row3[0].id;
-						var action = "C";
-						
-						$.ajax({
-						    type : "POST", 
-						    url : "/updateOfficeUserRole",
-						    data : { "uid": id , "action" : action},
-						    success : function(result) {
-								if(result){
-							       	$.messager.show({
-										title:'提示',
-										msg:'成功收回管理员权限',
-										timeout:2000,
-										showType:'slide'
-									}); 
-							       	$('#tb3').datagrid('reload');
-								}
-								else{
-							       	$.messager.show({
-										title:'提示',
-										msg:'收回管理员权限失败',
-										timeout:2000,
-										showType:'slide'
-									}); 
-								}
-							},
-							error : function(){
-						       	$.messager.show({
-									title:'失败',
-									msg:'收回管理员权限失败，这可能是由于服务器出现问题引起的',
-									timeout:2000,
-									showType:'slide'
-								}); 
-							}							
-						});
-						row3 = null;
-					}
-					else{
-						$.messager.show({
-							title:'错误',
-							msg:'请选择一行',
-							timeout:2000,
-							showType:'slide'
-						});
-					}
-				}
-			},'-',{
-				text:'搜索',
-				iconCls:'icon-search',
-				handler:function(){
-					$.messager.prompt('请输入关键字', '可以搜索名字和邮箱前缀', function(r){
-						console.log("keyword is "+r);
-						$.ajax({
-						    type : "POST", 
-						    url : "/saveKeyWord",
-						    data : { "keyword": r},
-						    success : function(result) {
-						    	console.log("keyword saved");
-							},
-							error : function(){
-						       	$.messager.show({
-									title:'失败',
-									msg:'搜索失败，这可能是由于服务器出现问题引起的',
-									timeout:2000,
-									showType:'slide'
-								}); 
-							}							
-						});
-						$('#tb3').datagrid('reload');
-					});
-				}
-			},{
 				text:'帮助',
 				iconCls:'icon-help',
 				handler:function(){
@@ -360,9 +198,9 @@
 			}],
 			columns : [[
 				{field : 'ck',title : '选中',align : 'center',checkbox: true}, 
-				{field : 'accountEnabled',title : '用户状态',align : 'center',sortable:true,
+				{field : 'acctStatus',title : '用户状态',align : 'center',sortable:true,
 					formatter: function(value,row,index){
-						if(value=='true'){
+						if(value==1){
 							return "<font color='green'>可用</font>";
 						}
 						else{
@@ -371,10 +209,23 @@
 					}
 				}, 
 				//{field : 'id',title : 'UID',align : 'center'}, 
-				{field : 'userPrincipalName',title : '邮箱',align : 'center',sortable:true}, 
-				{field : 'displayName',title : '名字',align : 'center',sortable:true},
-				{field : 'assignedLicenses',title : '已分配订阅',align : 'center',sortable:true},
-				{field : 'usageLocation',title : '国家/地区',align : 'center',sortable:true}
+				{field : 'userId',title : '用户名',align : 'center',sortable:true}, 
+				{field : 'passwd',title : '密码',align : 'center',sortable:true},
+				{field : 'acctRole',title : '角色',align : 'center',sortable:true,
+					formatter: function(value,row,index){
+						if(value=="9"){
+							return "管理员";
+						}
+						else if(value=="1") {
+							return "普通用户";
+						}
+						else{
+							return value;
+						}
+					}
+				},
+				{field : 'curSubDomain',title : '当前子域个数',align : 'center',sortable:true},
+				{field : 'maxSubDomain',title : '最大子域个数',align : 'center',sortable:true},
 			]],
             onLoadError: function (data){
             	console.log(data);
