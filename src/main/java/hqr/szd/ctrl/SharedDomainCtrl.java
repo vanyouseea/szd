@@ -1,27 +1,38 @@
 package hqr.szd.ctrl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import hqr.szd.service.DeleteDomain;
-import hqr.szd.service.GetDomain;
-import hqr.szd.service.GetDomainFromCf;
+import hqr.szd.dao.TaUserRepo;
+import hqr.szd.domain.TaUser;
 import hqr.szd.service.GetSharedDomain;
-import hqr.szd.service.UpdateDomain;
+import hqr.szd.service.UpdateUserDomainMapInfo;
 
 @Controller
 public class SharedDomainCtrl {
 	
 	@Autowired
+	private TaUserRepo tur;
+	
+	@Autowired
 	private GetSharedDomain gsd;
 
+	@Autowired
+	private UpdateUserDomainMapInfo uudm;
 	
 	@RequestMapping(value = {"/tabs/sharedomain.html"})
 	public String dummy() {
 		return "tabs/sharedomain";
+	}
+	
+	@RequestMapping(value = {"/tabs/dialogs/addDnsRecord.html"})
+	public String dummy2() {
+		return "tabs/addDnsRecord";
 	}
 	
 	@ResponseBody
@@ -44,5 +55,21 @@ public class SharedDomainCtrl {
 		
 		return gsd.getAllDomainInfo(intRows, intPage);
 	}
+	
+	@ResponseBody
+	@RequestMapping(value = {"/updateDnsRecords"})
+	public boolean updateDnsRecords(@RequestParam(name="seqNo",required = false) String seqNo,
+			@RequestParam(name="domainSeqNo") int domainSeqNo,
+			@RequestParam(name="prefix") String prefix,
+			@RequestParam(name="type") String type,
+			@RequestParam(name="ip") String ip,
+			@RequestParam(name="proxied") boolean proxied) {
+		
+		UserDetails ud = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		TaUser tu = tur.getUserById(ud.getUsername());
+		int userSeqNo = tu.getSeqNo();
+		return uudm.updateDnsRecords(seqNo, domainSeqNo,userSeqNo, prefix, type, ip, proxied );
+	}
+
 	
 }

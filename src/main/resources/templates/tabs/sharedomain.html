@@ -7,10 +7,94 @@
 </head>
 <body>
 	<div id="tb8" ></div>
+	<div id="dlg5" class="easyui-dialog" title="新建DNS记录" style="padding:10px" data-options="iconCls: 'icon-massadd',modal : true,closed : true,width: 400,height: 300,cache: false">
+		<table style="padding:10px">
+			<tr>
+				<td >子域前缀：</td>
+				<td><input id="prefix" class="easyui-textbox"  data-options="required:true" style="width: 245px" ></td>
+			</tr>
+			<tr>
+				<td >类型：</td>
+				<td><input class="easyui-textbox" id="type" value="A" data-options="required:true,disabled:true" style="width: 245px" ></td>
+			</tr>
+			<tr>
+				<td >当前域名：</td>
+				<td><input id="currDomain" class="easyui-textbox" data-options="required:true,disabled:true" style="width: 245px" ></td>
+			</tr>
+			<tr>
+				<td >IP地址：</td>
+				<td><input id="ip" class="easyui-textbox" data-options="required:true" style="width: 245px" ></td>
+			</tr>
+			<tr>
+				<td>是否代理：</td>
+				<td><input class="easyui-checkbox" name="proxied" ></td>
+			</tr>
+			<tr><td colspan="2"></td></tr>
+			<tr>
+				<td colspan="2" align="right">
+					<a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitDns()" style="width:80px">确认</a>
+					<a href="javascript:void(0)" class="easyui-linkbutton" onclick="closeTab()" style="width:80px">取消</a>
+				</td>
+			</tr>
+		</table>
+	</div>
 
 	<script type="text/javascript" th:inline="none">
 		var row8;
-
+		
+		function submitDns(){
+			var prefix = $('#prefix').textbox('getText');
+			var type = $('#type').textbox('getText');
+			var ip = $('#ip').textbox('getText');
+			var proxied = false;
+			$('input:checkbox[name=proxied]:checked').each(function(i){
+				//if found, then checked
+				proxied = true;
+			});
+			console.log(prefix+"|"+ip+"|"+proxied+"|"+row8[0].seqNo);
+			if (prefix == '' || ip == ''  ){
+				$.messager.alert('缺少参数','请填写所有的必须项','error'); 
+				return;
+			}
+			$.ajax({
+				type : 'POST', 
+				url : '/updateDnsRecords',
+				data : { 'domainSeqNo': row8[0].seqNo , 'prefix': prefix , 'type' : type, 'ip' : ip, 'proxied': proxied },
+				success : function(result) {
+					if ( result ) {
+						$.messager.show({
+							title:'成功',
+							msg:'已成功添加一条记录',
+							timeout:2000,
+							showType:'slide'
+						});
+						$('#tb8').datagrid('reload');
+					} else { 
+						$.messager.show({
+							title:'失败',
+							msg:'更新失败',
+							timeout:2000,
+							showType:'slide'
+						}); 
+					} 
+				},
+				error : function(){
+			       	$.messager.show({
+						title:'失败',
+						msg:'更新失败，请重试',
+						timeout:2000,
+						showType:'slide'
+					}); 
+				}
+			});
+			row8 = null;
+			$('#dlg5').dialog('close');
+		}
+		
+		function closeTab(){
+			$('#dlg5').dialog('close');
+		}
+		
 		$('#tb8').datagrid({
 			border:false,
 			fit:true,
@@ -34,26 +118,16 @@
 				handler:function(){
 					row8 = $('#tb8').datagrid('getSelections');
 					if(row8!=null&&row8.length>0){
-						$.messager.alert('信息','New'+row8[0].seqNo,'');
-						row8 = null;
-					}
-					else{
-						$.messager.show({
-							title:'错误',
-							msg:'请选择至少一行',
-							timeout:2000,
-							showType:'slide'
-						});
-					}					
-				}
-			},{
-				text:'修改',
-				iconCls:'icon-sum',
-				handler:function(){
-					row8 = $('#tb8').datagrid('getSelections');
-					if(row8!=null&&row8.length>0){
-						$.messager.alert('信息','update'+row8[0].seqNo,'');
-						row8 = null;
+						var curDomain = '';
+						if(row8[0].subZone!=null&&row8[0].subZone!=''){
+							curDomain = row8[0].subZone;
+						}
+						else{
+							curDomain = row8[0].zone;
+						}
+						$('#currDomain').textbox('setText',curDomain);
+						
+						$('#dlg5').dialog('open');
 					}
 					else{
 						$.messager.show({
