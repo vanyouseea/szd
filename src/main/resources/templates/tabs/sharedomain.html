@@ -58,10 +58,10 @@
 			}
 			$.ajax({
 				type : 'POST', 
-				url : '/updateDnsRecords',
+				url : '/updateMyDnsRecords',
 				data : { 'domainSeqNo': row8[0].seqNo , 'prefix': prefix , 'type' : type, 'ip' : ip, 'proxied': proxied },
 				success : function(result) {
-					if ( result ) {
+					if ( result=='' ) {
 						$.messager.show({
 							title:'成功',
 							msg:'已成功添加一条记录',
@@ -72,7 +72,7 @@
 					} else { 
 						$.messager.show({
 							title:'失败',
-							msg:'更新失败',
+							msg: result,
 							timeout:2000,
 							showType:'slide'
 						}); 

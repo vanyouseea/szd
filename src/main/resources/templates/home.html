@@ -20,6 +20,7 @@
 		    <div title="我的"  style="overflow:auto">
 		    	<ul class="easyui-tree">
 					<li><div onclick="addPanel('可用域名')">可用域名</div></li>
+					<li><div onclick="addPanel('我的子域')">我的子域</div></li>
 				</ul>
 		    </div>		    
 		    <div title="用户"  style="overflow:auto">
@@ -151,6 +152,14 @@
 					$('#acc').tabs('add',{
 						title: name,
 						href: 'tabs/sharedomain.html',
+						//content: '<div style="padding:10px">Content</div>',
+						closable: true
+					});
+				}
+				else if(name=='我的子域'){
+					$('#acc').tabs('add',{
+						title: name,
+						href: 'tabs/mydomain.html',
 						//content: '<div style="padding:10px">Content</div>',
 						closable: true
 					});

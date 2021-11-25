@@ -6,10 +6,11 @@
 
 </head>
 <body>
-	<div id="tb1" ></div>
+	<div id="tb10" ></div>
+	<div id="dlg10"></div>
 	<script type="text/javascript" th:inline="none">
 		var row;
-		$('#tb1').datagrid({
+		$('#tb10').datagrid({
 			border:false,
 			fit:true,
 			striped:true,
@@ -20,29 +21,23 @@
 			pageSize : 100,
 			pageList : [100,200,500],
 			remoteSort: false,
-			url:'/getUserDomains',
+			url:'/getMyDomains',
 			method:'post',
 			toolbar: [{
 				text:'删除',
 				iconCls:'icon-remove',
 				handler:function(){
-					row = $('#tb1').datagrid('getSelections');
+					row = $('#tb10').datagrid('getSelections');
 					if(row!=null&&row.length>0){
 						var seqNos = '';
 						for(var rr of row){
 							seqNos = seqNos + rr.seqNo + ',';
 						}
-						$.messager.confirm('删除解析', '将删除'+row.length+'条解析，删除本地记录的同时也会删除CF对应的解析同时用户的子域数量相应减少，你确定吗', function(r){
+						$.messager.confirm('删除解析', '将删除'+row.length+'条CF解析但这并<font color=red>不会减少</font>你持有的子域数量，你确定吗', function(r){
 							if (r){
-						       	$.messager.show({
-									title:'提示',
-									msg: '删除请求已提交，请稍等',
-									timeout:3000,
-									showType:'slide'
-								}); 
 								$.ajax({
 								    type : "POST", 
-								    url : "/deleteUserDnsRecords",
+								    url : "/deleteMyDnsRecords",
 								    data : { "seqNos": seqNos },
 								    success : function() {
 								       	$.messager.show({
@@ -51,12 +46,12 @@
 											timeout:3000,
 											showType:'slide'
 										}); 
-								       	$('#tb1').datagrid('reload');
+								       	$('#tb10').datagrid('reload');
 								    },
 									error : function(e){
 								       	$.messager.show({
-											title:'删除用户',
-											msg:'删除用户失败，这可能是由于服务器出现问题引起的 '+e,
+											title:'删除解析',
+											msg:'删除解析失败，这可能是由于服务器出现问题引起的 '+e,
 											timeout:2000,
 											showType:'slide'
 										}); 
@@ -79,7 +74,7 @@
 				text:'刷新',
 				iconCls:'icon-reload',
 				handler:function(){
-					$('#tb1').datagrid('reload');
+					$('#tb10').datagrid('reload');
 				}
 			},'-',{
 				text:'帮助',
@@ -123,7 +118,7 @@
             onLoadError: function (data){
             	console.log(data);
             	$.messager.alert('错误', data.responseText ,'error');
-				$('#tb1').datagrid('loadData',{'total':0,'rows':[]});
+				$('#tb10').datagrid('loadData',{'total':0,'rows':[]});
             }
 		});
 		

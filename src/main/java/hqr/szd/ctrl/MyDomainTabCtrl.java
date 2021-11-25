@@ -1,41 +1,43 @@
 package hqr.szd.ctrl;
 
-import java.util.Collection;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import hqr.szd.service.DeleteUserDnsRecords;
-import hqr.szd.service.GetUserDomainMapInfo;
+
+import hqr.szd.dao.TaUserRepo;
+import hqr.szd.domain.TaUser;
+import hqr.szd.service.DeleteMyDnsRecords;
+import hqr.szd.service.GetMyDomainMapInfo;
 
 @Controller
-public class UserDomainTabCtrl {
+public class MyDomainTabCtrl {
 	
 	@Autowired
-	private GetUserDomainMapInfo gdmi;
+	private TaUserRepo tur;
 	
 	@Autowired
-	private DeleteUserDnsRecords dnr;
+	private GetMyDomainMapInfo gmdm;
 	
-	@RequestMapping(value = {"/tabs/userdomain.html"})
+	@Autowired
+	private DeleteMyDnsRecords dmdr;
+	
+	@RequestMapping(value = {"/tabs/mydomain.html"})
 	public String dummy() {
-		return "tabs/userdomain";
+		return "tabs/mydomain";
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = {"/getUserDomains"})
-	public String getUserDomains(String page, String rows) {
+	@RequestMapping(value = {"/getMyDomains"})
+	public String getMyDomains(String page, String rows) {
 		
 		UserDetails ud = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Collection<? extends GrantedAuthority>  cl = ud.getAuthorities();
-		System.out.println("Req user is "+ud.getUsername());
-		for (GrantedAuthority grantedAuthority : cl) {
-			System.out.println("Role is "+grantedAuthority.getAuthority());
-		}
+		TaUser enti = tur.getUserById(ud.getUsername());
+		int mySeqNo = enti.getSeqNo();
 		
 		int intPage = 1;
 		int intRows = 100;
@@ -52,13 +54,16 @@ public class UserDomainTabCtrl {
 			System.out.println("Invalid row, force it to 100");
 		}
 
-		return gdmi.getUserDnsRecords(intPage, intRows);
+		return gmdm.getUserDnsRecords(mySeqNo, intPage, intRows);
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = {"/deleteUserDnsRecords"})
-	public void deleteDnsRecords(@RequestParam(name="seqNos") String seqNos) {
-		dnr.deleteRecords(seqNos);
+	@RequestMapping(value = {"/deleteMyDnsRecords"})
+	public void deleteMyDnsRecords(@RequestParam(name="seqNos") String seqNos) {
+		UserDetails ud = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		TaUser enti = tur.getUserById(ud.getUsername());
+		int mySeqNo = enti.getSeqNo();
+		dmdr.deleteRecords(mySeqNo, seqNos);
 	}
 	
 }

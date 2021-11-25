@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import hqr.szd.dao.TaUserRepo;
 import hqr.szd.domain.TaUser;
 import hqr.szd.service.GetSharedDomain;
-import hqr.szd.service.UpdateUserDomainMapInfo;
+import hqr.szd.service.UpdateMyDomainMapInfo;
 
 @Controller
 public class SharedDomainCtrl {
@@ -23,16 +23,11 @@ public class SharedDomainCtrl {
 	private GetSharedDomain gsd;
 
 	@Autowired
-	private UpdateUserDomainMapInfo uudm;
+	private UpdateMyDomainMapInfo uudm;
 	
 	@RequestMapping(value = {"/tabs/sharedomain.html"})
 	public String dummy() {
 		return "tabs/sharedomain";
-	}
-	
-	@RequestMapping(value = {"/tabs/dialogs/addDnsRecord.html"})
-	public String dummy2() {
-		return "tabs/addDnsRecord";
 	}
 	
 	@ResponseBody
@@ -57,8 +52,8 @@ public class SharedDomainCtrl {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = {"/updateDnsRecords"})
-	public boolean updateDnsRecords(@RequestParam(name="seqNo",required = false) String seqNo,
+	@RequestMapping(value = {"/updateMyDnsRecords"})
+	public String updateDnsRecords(@RequestParam(name="seqNo",required = false) String seqNo,
 			@RequestParam(name="domainSeqNo") int domainSeqNo,
 			@RequestParam(name="prefix") String prefix,
 			@RequestParam(name="type") String type,
