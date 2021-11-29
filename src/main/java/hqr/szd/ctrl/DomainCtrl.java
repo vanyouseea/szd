@@ -1,6 +1,11 @@
 package hqr.szd.ctrl;
 
+import java.util.Collection;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,22 +39,27 @@ public class DomainCtrl {
 	@ResponseBody
 	@RequestMapping(value = {"/getDomain"})
 	public String getDomain(String page, String rows) {
-		int intPage = 1;
-		int intRows = 10;
-		try {
-			intPage = Integer.valueOf(page);
+		if(hasAccess()) {
+			int intPage = 1;
+			int intRows = 10;
+			try {
+				intPage = Integer.valueOf(page);
+			}
+			catch (Exception e) {
+				System.out.println("Invalid page, force it to 1");
+			}
+			try {
+				intRows = Integer.valueOf(rows);
+			}
+			catch (Exception e) {
+				System.out.println("Invalid row, force it to 10");
+			}
+			
+			return gd.getAllDomainInfo(intRows, intPage);
 		}
-		catch (Exception e) {
-			System.out.println("Invalid page, force it to 1");
+		else {
+			return "403";
 		}
-		try {
-			intRows = Integer.valueOf(rows);
-		}
-		catch (Exception e) {
-			System.out.println("Invalid row, force it to 10");
-		}
-		
-		return gd.getAllDomainInfo(intRows, intPage);
 	}
 	
 	@ResponseBody
@@ -68,6 +78,20 @@ public class DomainCtrl {
 	@RequestMapping(value = {"/deleteDomain"})
 	public void deleteDomain(@RequestParam(name="seqNos") String seqNos) {
 		dd.deleteDomains(seqNos);
+	}
+	
+	private boolean hasAccess() {
+		UserDetails ud = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Collection<? extends GrantedAuthority> cl = ud.getAuthorities();
+		for (GrantedAuthority ga : cl) {
+			String role = ga.getAuthority();
+			System.out.println(ud.getUsername()+"role:"+role);
+			if(role.indexOf("ADMIN")>=0) {
+				System.out.println("Go to home_admin");
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }

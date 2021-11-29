@@ -5,7 +5,6 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import hqr.szd.dao.TaUserRepo;
@@ -18,15 +17,20 @@ public class TaUserDetailsService implements UserDetailsService{
 	private TaUserRepo tup;
 	
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String username) {
 		TaUser taUser = tup.getUserById(username);
 		
-		System.out.println("User role is "+taUser.getAcctRole());
-		if("9".equals(taUser.getAcctRole())) {
-			return new User(username, taUser.getPasswd(),AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_ADMIN"));
+		if(taUser!=null) {
+			System.out.println("User role is "+taUser.getAcctRole());
+			if("9".equals(taUser.getAcctRole())) {
+				return new User(username, taUser.getPasswd(),AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_ADMIN"));
+			}
+			else {
+				return new User(username, taUser.getPasswd(),AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_NORMAL"));
+			}
 		}
 		else {
-			return new User(username, taUser.getPasswd(),AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_NORMAL"));
+			return null;
 		}
         
 	}
