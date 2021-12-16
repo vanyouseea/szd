@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import hqr.szd.service.DeleteUserDnsRecords;
 import hqr.szd.service.GetUserDomainMapInfo;
+import hqr.szd.service.UpdateUserDomainMapInfo;
 
 @Controller
 public class UserDomainTabCtrl {
@@ -21,9 +22,17 @@ public class UserDomainTabCtrl {
 	@Autowired
 	private DeleteUserDnsRecords dnr;
 	
+	@Autowired
+	private UpdateUserDomainMapInfo uudm;
+	
 	@RequestMapping(value = {"/tabs/userdomain.html"})
 	public String dummy() {
-		return "tabs/userdomain";
+		if(hasAccess()) {
+			return "tabs/userdomain";
+		}
+		else {
+			return "error/403";
+		}
 	}
 	
 	@ResponseBody
@@ -52,13 +61,47 @@ public class UserDomainTabCtrl {
 			System.out.println("Invalid row, force it to 100");
 		}
 
-		return gdmi.getUserDnsRecords(intPage, intRows);
+		if(hasAccess()) {
+			return gdmi.getUserDnsRecords(intPage, intRows);
+		}
+		else {
+			return "403";
+		}
 	}
 	
 	@ResponseBody
 	@RequestMapping(value = {"/deleteUserDnsRecords"})
-	public void deleteDnsRecords(@RequestParam(name="seqNos") String seqNos) {
-		dnr.deleteRecords(seqNos);
+	public void deleteUserDnsRecords(@RequestParam(name="seqNos") String seqNos) {
+		if(hasAccess()) {
+			dnr.deleteRecords(seqNos);
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = {"/updateUserDnsRecords"})
+	public void updateUserDnsRecords(@RequestParam(name="seqNo") int seqNo,
+			@RequestParam(name="prefix") String prefix,
+			@RequestParam(name="type") String type,
+			@RequestParam(name="ip") String ip,
+			@RequestParam(name="proxied") boolean proxied) {
+		type = "A";
+		if(hasAccess()) {
+			uudm.updateDnsRecords(seqNo, prefix, type, ip, proxied);
+		}
+	}
+	
+	private boolean hasAccess() {
+		UserDetails ud = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Collection<? extends GrantedAuthority> cl = ud.getAuthorities();
+		for (GrantedAuthority ga : cl) {
+			String role = ga.getAuthority();
+			System.out.println(ud.getUsername()+"role:"+role);
+			if(role.indexOf("ADMIN")>=0) {
+				System.out.println("Go to home_admin");
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }

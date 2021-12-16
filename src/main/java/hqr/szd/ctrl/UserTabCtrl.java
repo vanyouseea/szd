@@ -1,6 +1,11 @@
 package hqr.szd.ctrl;
 
+import java.util.Collection;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -14,7 +19,12 @@ public class UserTabCtrl {
 	
 	@RequestMapping(value = {"/tabs/user.html"})
 	public String dummy() {
-		return "tabs/user";
+		if(hasAccess()) {
+			return "tabs/user";
+		}
+		else {
+			return "error/403";
+		}
 	}
 	
 	@ResponseBody
@@ -35,7 +45,25 @@ public class UserTabCtrl {
 			System.out.println("Invalid row, force it to 100");
 		}
 
-		return gi.getUsers(intPage, intRows);
+		if(hasAccess()) {
+			return gi.getUsers(intPage, intRows);
+		}
+		else {
+			return "403";
+		}
 	}
 	
+	private boolean hasAccess() {
+		UserDetails ud = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Collection<? extends GrantedAuthority> cl = ud.getAuthorities();
+		for (GrantedAuthority ga : cl) {
+			String role = ga.getAuthority();
+			System.out.println(ud.getUsername()+"role:"+role);
+			if(role.indexOf("ADMIN")>=0) {
+				System.out.println("Go to home_admin");
+				return true;
+			}
+		}
+		return false;
+	}
 }

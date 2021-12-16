@@ -1,6 +1,7 @@
 package hqr.szd.ctrl;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,9 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -40,12 +44,22 @@ public class InviteTabCtrl {
 	
 	@RequestMapping(value = {"/tabs/invite.html"})
 	public String dummy() {
-		return "tabs/invite";
+		if(hasAccess()) {
+			return "tabs/invite";
+		}
+		else {
+			return "error/403";
+		}
 	}
 	
 	@RequestMapping(value = {"/tabs/dialogs/createInviteCd.html"})
 	public String dummy2(HttpServletRequest req) {
-		return "tabs/dialogs/createInviteCd";
+		if(hasAccess()) {
+			return "tabs/dialogs/createInviteCd";
+		}
+		else {
+			return "error/403";
+		}
 	}
 	
 	@RequestMapping(value = {"/refer.html"})
@@ -71,7 +85,12 @@ public class InviteTabCtrl {
 			System.out.println("Invalid row, force it to 10");
 		}
 		
-		return gii.getAllInviteInfo(intRows, intPage);
+		if(hasAccess()) {
+			return gii.getAllInviteInfo(intRows, intPage);
+		}
+		else {
+			return "403";
+		}
 	}
 	
 	@ResponseBody
@@ -87,14 +106,24 @@ public class InviteTabCtrl {
 		}
 		catch (Exception e) {}
 		
-		return mci.create(count, startDt, endDt);
+		if(hasAccess()) {
+			return mci.create(count, startDt, endDt);
+		}
+		else {
+			return "403";
+		}
 	}
 	
 	@ResponseBody
 	@RequestMapping(value = {"/delInviteCds"})
 	public String deleteInviteInfo(@RequestParam(name="uuids") String uuids) {
-		dii.deleteInviteCd(uuids);
-		return "已删除";
+		if(hasAccess()) {
+			dii.deleteInviteCd(uuids);
+			return "已删除";
+		}
+		else {
+			return "403";
+		}
 	}
 	
 	@ResponseBody
@@ -102,15 +131,18 @@ public class InviteTabCtrl {
 	public String createUserByInviteCd(@RequestParam(name="inviteCd") String inviteCd,
 			@RequestParam(name="userId") String userId,
 			@RequestParam(name="password") String password) {
-
 		return coubi.createCommonUser(inviteCd, userId, password);
 	}
 	
 	@RequestMapping(value = {"/exportInvites"}, method = RequestMethod.GET)
 	public ResponseEntity<FileSystemResource> exportApps(){
-		ei.exportInvite();
-		
-		return export(new File("export_invite_info.csv"));
+		if(hasAccess()) {
+			ei.exportInvite();
+			return export(new File("export_invite_info.csv"));
+		}
+		else {
+			return null;
+		}
 	}
 	
 	public ResponseEntity<FileSystemResource> export(File file) { 
@@ -125,4 +157,17 @@ public class InviteTabCtrl {
 	    return ResponseEntity.ok().headers(headers) .contentLength(file.length()) .contentType(MediaType.parseMediaType("text/csv")) .body(new FileSystemResource(file));
 	}
 	
+	private boolean hasAccess() {
+		UserDetails ud = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Collection<? extends GrantedAuthority> cl = ud.getAuthorities();
+		for (GrantedAuthority ga : cl) {
+			String role = ga.getAuthority();
+			System.out.println(ud.getUsername()+"role:"+role);
+			if(role.indexOf("ADMIN")>=0) {
+				System.out.println("Go to home_admin");
+				return true;
+			}
+		}
+		return false;
+	}
 }

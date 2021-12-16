@@ -20,7 +20,7 @@ public class UpdateMyDomainMapInfo {
 	@Autowired
 	private SzdUserDomainMapRepo sudmr;
 	
-	public String updateDnsRecords(String seqNo, int domainSeqNo, int userSeqNo, String prefix, String type, String ip, boolean proxied ) {
+	public String updateDnsRecords(String seqNo, int domainSeqNo, int userSeqNo, String prefix, String type, String ip, boolean proxied,String curDomain ) {
 		String res = "";
 		
 		SzdUserDomainMap enti = new SzdUserDomainMap();
@@ -42,6 +42,7 @@ public class UpdateMyDomainMapInfo {
 					enti.setIp(ip);
 					enti.setProxied(proxied?1:0);
 					enti.setCreateDt(new Date());
+					enti.setCurDomain(curDomain);
 					sudmr.saveAndFlush(enti);
 				}
 				else {
@@ -62,6 +63,7 @@ public class UpdateMyDomainMapInfo {
 			enti.setIp(ip);
 			enti.setProxied(proxied?1:0);
 			enti.setCreateDt(new Date());
+			enti.setCurDomain(curDomain);
 			sudmr.saveAndFlush(enti);
 		}
 		return res;

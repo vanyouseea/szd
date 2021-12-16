@@ -33,7 +33,12 @@ public class DomainCtrl {
 	
 	@RequestMapping(value = {"/tabs/domain.html"})
 	public String dummy() {
-		return "tabs/domain";
+		if(hasAccess()) {
+			return "tabs/domain";
+		}
+		else {
+			return "error/403";
+		}
 	}
 	
 	@ResponseBody
@@ -65,19 +70,28 @@ public class DomainCtrl {
 	@ResponseBody
 	@RequestMapping(value = {"/getDomainFromCf"})
 	public String getDomainFromCf() {
-		return gdcf.initDomainInfo();
+		if(hasAccess()) {
+			return gdcf.initDomainInfo();
+		}
+		else {
+			return "403";
+		}
 	}
 	
 	@ResponseBody
 	@RequestMapping(value = {"/updateDomain"})
 	public void updateDomain(@RequestParam(name="seqNos") String seqNos) {
-		ud.saveDomains(seqNos);
+		if(hasAccess()) {
+			ud.saveDomains(seqNos);
+		}
 	}
 	
 	@ResponseBody
 	@RequestMapping(value = {"/deleteDomain"})
 	public void deleteDomain(@RequestParam(name="seqNos") String seqNos) {
-		dd.deleteDomains(seqNos);
+		if(hasAccess()) {
+			dd.deleteDomains(seqNos);
+		}
 	}
 	
 	private boolean hasAccess() {

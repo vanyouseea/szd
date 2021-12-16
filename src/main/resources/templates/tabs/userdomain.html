@@ -7,7 +7,39 @@
 </head>
 <body>
 	<div id="tb1" ></div>
-	<script type="text/javascript" th:inline="none">
+		<div id="dlg8" class="easyui-dialog" title="编辑DNS记录" style="padding:10px" data-options="iconCls: 'icon-massadd',modal : true,closed : true,width: 400,height: 300,cache: false">
+		<table style="padding:10px">
+			<tr>
+				<td >子域前缀：</td>
+				<td><input id="prefix1" class="easyui-textbox"  data-options="required:true" style="width: 245px" ></td>
+			</tr>
+			<tr>
+				<td >类型：</td>
+				<td><input class="easyui-textbox" id="type1" value="A" data-options="required:true,disabled:true" style="width: 245px" ></td>
+			</tr>
+			<tr>
+				<td >当前域名：</td>
+				<td><input id="curDomain1" class="easyui-textbox" data-options="required:true,disabled:true" style="width: 245px" ></td>
+			</tr>
+			<tr>
+				<td >IP地址：</td>
+				<td><input id="ip1" class="easyui-textbox" data-options="required:true" style="width: 245px" ></td>
+			</tr>
+			<tr>
+				<td>是否代理：</td>
+				<td><input class="easyui-checkbox" id="proxied1" name="proxied1" ></td>
+			</tr>
+			<tr><td colspan="2"></td></tr>
+			<tr>
+				<td colspan="2" align="right">
+					<a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitDns()" style="width:80px">确认</a>
+					<a href="javascript:void(0)" class="easyui-linkbutton" onclick="closeTab()" style="width:80px">取消</a>
+				</td>
+			</tr>
+		</table>
+	</div>
+	
+	<script type1="text/javascript" th:inline="none">
 		var row;
 		$('#tb1').datagrid({
 			border:false,
@@ -23,6 +55,37 @@
 			url:'/getUserDomains',
 			method:'post',
 			toolbar: [{
+				text:'编辑',
+				iconCls:'icon-edit',
+				handler:function(){
+					row = $('#tb1').datagrid('getSelections');
+					if(row!=null&&row.length==1){
+						$('#prefix1').textbox('setText',row[0].prefix);
+						$('#type1').textbox('setText',row[0].type);
+						$('#ip1').textbox('setText',row[0].ip);
+						$('#curDomain1').textbox('setText',row[0].curDomain);
+						if(row[0].proxied1==0){
+							$('#proxied1').checkbox({
+								checked:false
+							});
+						}
+						else{
+							$('#proxied1').checkbox({
+								checked:true
+							});
+						}
+						$('#dlg8').dialog('open');
+					}
+					else{
+						$.messager.show({
+							title:'错误',
+							msg:'请选择一行',
+							timeout:2000,
+							showType:'slide'
+						});
+					}
+				}
+			},{
 				text:'删除',
 				iconCls:'icon-remove',
 				handler:function(){
@@ -41,7 +104,7 @@
 									showType:'slide'
 								}); 
 								$.ajax({
-								    type : "POST", 
+								    type1 : "POST", 
 								    url : "/deleteUserDnsRecords",
 								    data : { "seqNos": seqNos },
 								    success : function() {
@@ -106,6 +169,7 @@
 						}
 					}	
 				},
+				{field : 'curDomain',title : '域名',align : 'center',sortable:true},
 				{field : 'createDt',title : '创建时间',align : 'center',sortable:true,
 					formatter: function(value,row,index){
 						if(value==null||value==''){
@@ -126,6 +190,50 @@
 				$('#tb1').datagrid('loadData',{'total':0,'rows':[]});
             }
 		});
+		
+		function submitDns(){
+			var prefix1 = $('#prefix1').textbox('getText');
+			var type1 = $('#type1').textbox('getText');
+			var ip1 = $('#ip1').textbox('getText');
+			var proxied1 = false;
+			$('input:checkbox[name=proxied1]:checked').each(function(i){
+				//if found, then checked
+				proxied1 = true;
+			});
+			console.log(prefix1+"|"+ip1+"|"+proxied1+"|"+row[0].seqNo);
+			if (prefix1 == '' || ip1 == ''  ){
+				$.messager.alert('缺少参数','请填写所有的必须项','error'); 
+				return;
+			}
+			$.ajax({
+				type1 : 'POST', 
+				url : '/updateUserDnsRecords',
+				data : { 'seqNo': row[0].seqNo , 'prefix': prefix1 , 'type' : type1, 'ip1' : ip, 'proxied1': proxied },
+				success : function() {
+					$.messager.show({
+						title:'成功',
+						msg:'DNS记录已修改',
+						timeout:2000,
+						showType:'slide'
+					});
+					$('#tb1').datagrid('reload');
+				},
+				error : function(){
+			       	$.messager.show({
+						title:'失败',
+						msg:'更新失败，请重试',
+						timeout:2000,
+						showType:'slide'
+					}); 
+				}
+			});
+			row = null;
+			$('#dlg8').dialog('close');
+		}
+		
+		function closeTab(){
+			$('#dlg8').dialog('close');
+		}
 		
 		function dateFormat(fmt, date) {
 		    let ret;

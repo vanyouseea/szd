@@ -58,12 +58,13 @@ public class SharedDomainCtrl {
 			@RequestParam(name="prefix") String prefix,
 			@RequestParam(name="type") String type,
 			@RequestParam(name="ip") String ip,
-			@RequestParam(name="proxied") boolean proxied) {
-		
+			@RequestParam(name="proxied") boolean proxied,
+			@RequestParam(name="curDomain") String curDomain) {
+		type = "A";
 		UserDetails ud = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		TaUser tu = tur.getUserById(ud.getUsername());
 		int userSeqNo = tu.getSeqNo();
-		return uudm.updateDnsRecords(seqNo, domainSeqNo,userSeqNo, prefix, type, ip, proxied );
+		return uudm.updateDnsRecords(seqNo, domainSeqNo,userSeqNo, prefix, type, ip, proxied,curDomain);
 	}
 
 	

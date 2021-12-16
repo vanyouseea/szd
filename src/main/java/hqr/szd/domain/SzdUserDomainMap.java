@@ -23,6 +23,7 @@ public class SzdUserDomainMap {
 	 * 1 - true
 	 */
 	private int proxied = 0;
+	private String curDomain;
 	private Date createDt;
 	public int getSeqNo() {
 		return seqNo;
@@ -71,5 +72,11 @@ public class SzdUserDomainMap {
 	}
 	public void setCreateDt(Date createDt) {
 		this.createDt = createDt;
+	}
+	public String getCurDomain() {
+		return curDomain;
+	}
+	public void setCurDomain(String curDomain) {
+		this.curDomain = curDomain;
 	}
 }
