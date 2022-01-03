@@ -28,6 +28,7 @@ public class RegCtrl {
 			user.setUserId(userid);
 			user.setPasswd(pwd);
 			user.setAcctRole("9");
+			user.setMaxSubDomain(10);
 			su.save(user);
 		}
 		else {

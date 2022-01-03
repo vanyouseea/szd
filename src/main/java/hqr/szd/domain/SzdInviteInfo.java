@@ -18,6 +18,7 @@ public class SzdInviteInfo {
 	 * 4 - Failure
 	 */
 	private String inviteStatus = "1";
+	private int userDomainCnt = 1;
 	private String result;
 	public String getInviteId() {
 		return inviteId;
@@ -42,6 +43,12 @@ public class SzdInviteInfo {
 	}
 	public void setInviteStatus(String inviteStatus) {
 		this.inviteStatus = inviteStatus;
+	}
+	public int getUserDomainCnt() {
+		return userDomainCnt;
+	}
+	public void setUserDomainCnt(int userDomainCnt) {
+		this.userDomainCnt = userDomainCnt;
 	}
 	public String getResult() {
 		return result;

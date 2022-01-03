@@ -23,7 +23,6 @@ public interface SzdUserDomainMapRepo extends JpaRepository<SzdUserDomainMap, In
 	
 	@Transactional
     @Modifying
-	//@Query(value="update eds_proxy_info set status=1 where status=0 ", nativeQuery = true)
 	int deleteBySeqNoAndUserSeqNo(int seqNo, int userSeqNo);
 	
 }

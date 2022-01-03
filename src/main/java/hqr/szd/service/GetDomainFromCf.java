@@ -90,7 +90,7 @@ public class GetDomainFromCf {
 		}
 	}
 	
-	public String initDomainInfo() {
+	public String initDomainInfo(int userSeqNo) {
 		//什么都不返回代表成功
 		String res = "";
 		
@@ -103,11 +103,11 @@ public class GetDomainFromCf {
 			if(en1.getCd()!=null&&!"".equals(en1.getCd())&&en2.getCd()!=null&&!"".equals(en2.getCd())) {
 				initlRestTemplate();
 				sdr.deleteAll();
-				HashMap<String, Object> map = getZoneIds(en1.getCd(), en2.getCd());
+				HashMap<String, Object> map = getZoneIds(en1.getCd(), en2.getCd(), userSeqNo);
 				String status = (String)map.get("status");
 				if("succ".equals(status)) {
 					ArrayList<String> list = (ArrayList<String>)map.get("res");
-					getSubZoneIds(list, en1.getCd(), en2.getCd());
+					getSubZoneIds(list, en1.getCd(), en2.getCd(), userSeqNo);
 				}
 				else {
 					res = (String)map.get("res");
@@ -124,7 +124,7 @@ public class GetDomainFromCf {
 		return res;
 	}
 	
-	private HashMap<String, Object> getZoneIds(String cfAuthEmail, String cfAuthKey){
+	private HashMap<String, Object> getZoneIds(String cfAuthEmail, String cfAuthKey, int userSeqNo){
 		HashMap<String,Object> map = new HashMap<String, Object>();
 		ArrayList<String> list = new ArrayList<String>();
 		
@@ -156,6 +156,7 @@ public class GetDomainFromCf {
 						enti.setZone(zoneName);
 						enti.setZoneId(zoneId);
 						enti.setCreateDt(new Date());
+						enti.setUserSeqNo(userSeqNo);
 						sdr.saveAndFlush(enti);
 					}
 				}
@@ -175,7 +176,7 @@ public class GetDomainFromCf {
 		return map;
 	}
 	
-	private void getSubZoneIds(ArrayList<String> list, String cfAuthEmail, String cfAuthKey) {
+	private void getSubZoneIds(ArrayList<String> list, String cfAuthEmail, String cfAuthKey, int userSeqNo) {
 		for(String zoneId: list) {
 			String endpoint = "https://api.cloudflare.com/client/v4/zones/"+zoneId+"/dns_records";
 			HttpHeaders headers = new HttpHeaders();
@@ -207,6 +208,7 @@ public class GetDomainFromCf {
 								enti.setZone(zoneName);
 								enti.setZoneId(zoneId);
 								enti.setCreateDt(new Date());
+								enti.setUserSeqNo(userSeqNo);
 								sdr.saveAndFlush(enti);
 							}
 						}

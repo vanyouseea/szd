@@ -93,9 +93,7 @@ public class SystemTabCtrl {
 		Collection<? extends GrantedAuthority> cl = ud.getAuthorities();
 		for (GrantedAuthority ga : cl) {
 			String role = ga.getAuthority();
-			System.out.println(ud.getUsername()+"role:"+role);
 			if(role.indexOf("ADMIN")>=0) {
-				System.out.println("Go to home_admin");
 				return true;
 			}
 		}

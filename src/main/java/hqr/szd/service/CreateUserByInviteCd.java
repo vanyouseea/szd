@@ -56,6 +56,7 @@ public class CreateUserByInviteCd {
 					enti.setUserId(userId);
 					enti.setPasswd(password);
 					enti.setAcctRole("1");
+					enti.setMaxSubDomain(tiiDo.getUserDomainCnt());
 					tur.saveAndFlush(enti);
 					tiiDo.setResult(userId);
 					tiiDo.setInviteStatus("3");

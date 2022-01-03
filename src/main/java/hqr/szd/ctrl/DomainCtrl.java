@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import hqr.szd.dao.TaUserRepo;
+import hqr.szd.domain.TaUser;
 import hqr.szd.service.DeleteDomain;
 import hqr.szd.service.GetDomain;
 import hqr.szd.service.GetDomainFromCf;
@@ -30,6 +32,9 @@ public class DomainCtrl {
 	
 	@Autowired
 	private DeleteDomain dd;
+	
+	@Autowired
+	private TaUserRepo tur;
 	
 	@RequestMapping(value = {"/tabs/domain.html"})
 	public String dummy() {
@@ -71,7 +76,10 @@ public class DomainCtrl {
 	@RequestMapping(value = {"/getDomainFromCf"})
 	public String getDomainFromCf() {
 		if(hasAccess()) {
-			return gdcf.initDomainInfo();
+			UserDetails ud = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			TaUser tu = tur.getUserById(ud.getUsername());
+			int userSeqNo = tu.getSeqNo();
+			return gdcf.initDomainInfo(userSeqNo);
 		}
 		else {
 			return "403";
@@ -99,9 +107,7 @@ public class DomainCtrl {
 		Collection<? extends GrantedAuthority> cl = ud.getAuthorities();
 		for (GrantedAuthority ga : cl) {
 			String role = ga.getAuthority();
-			System.out.println(ud.getUsername()+"role:"+role);
 			if(role.indexOf("ADMIN")>=0) {
-				System.out.println("Go to home_admin");
 				return true;
 			}
 		}

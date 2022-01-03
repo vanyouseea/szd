@@ -38,14 +38,6 @@ public class UserDomainTabCtrl {
 	@ResponseBody
 	@RequestMapping(value = {"/getUserDomains"})
 	public String getUserDomains(String page, String rows) {
-		
-		UserDetails ud = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Collection<? extends GrantedAuthority>  cl = ud.getAuthorities();
-		System.out.println("Req user is "+ud.getUsername());
-		for (GrantedAuthority grantedAuthority : cl) {
-			System.out.println("Role is "+grantedAuthority.getAuthority());
-		}
-		
 		int intPage = 1;
 		int intRows = 100;
 		try {
@@ -71,22 +63,28 @@ public class UserDomainTabCtrl {
 	
 	@ResponseBody
 	@RequestMapping(value = {"/deleteUserDnsRecords"})
-	public void deleteUserDnsRecords(@RequestParam(name="seqNos") String seqNos) {
+	public String deleteUserDnsRecords(@RequestParam(name="seqNos") String seqNos) {
 		if(hasAccess()) {
-			dnr.deleteRecords(seqNos);
+			return dnr.deleteRecords(seqNos);
+		}
+		else {
+			return "403";
 		}
 	}
 	
 	@ResponseBody
 	@RequestMapping(value = {"/updateUserDnsRecords"})
-	public void updateUserDnsRecords(@RequestParam(name="seqNo") int seqNo,
+	public String updateUserDnsRecords(@RequestParam(name="seqNo") int seqNo,
 			@RequestParam(name="prefix") String prefix,
 			@RequestParam(name="type") String type,
 			@RequestParam(name="ip") String ip,
 			@RequestParam(name="proxied") boolean proxied) {
 		type = "A";
 		if(hasAccess()) {
-			uudm.updateDnsRecords(seqNo, prefix, type, ip, proxied);
+			return uudm.updateDnsRecords(seqNo, prefix, type, ip, proxied);
+		}
+		else {
+			return "403";
 		}
 	}
 	
@@ -95,9 +93,7 @@ public class UserDomainTabCtrl {
 		Collection<? extends GrantedAuthority> cl = ud.getAuthorities();
 		for (GrantedAuthority ga : cl) {
 			String role = ga.getAuthority();
-			System.out.println(ud.getUsername()+"role:"+role);
 			if(role.indexOf("ADMIN")>=0) {
-				System.out.println("Go to home_admin");
 				return true;
 			}
 		}

@@ -97,9 +97,10 @@ public class InviteTabCtrl {
 	@RequestMapping(value = {"/massCreateInviteCd"})
 	public String massCreateInviteCd(@RequestParam(name="count") String countStr,
 			@RequestParam(name="startDt",required = false) String startDt,
-			@RequestParam(name="endDt",required = false) String endDt) {
+			@RequestParam(name="endDt",required = false) String endDt,
+			@RequestParam(name="userDomainCnt",required = false) int userDomainCnt) {
 		
-		System.out.println("startDt:"+startDt+" endDt:"+endDt);
+		System.out.println("startDt:"+startDt+" endDt:"+endDt + " userDomainCnt:"+userDomainCnt);
 		int count = 10;
 		try {
 			count = Integer.parseInt(countStr);
@@ -107,7 +108,7 @@ public class InviteTabCtrl {
 		catch (Exception e) {}
 		
 		if(hasAccess()) {
-			return mci.create(count, startDt, endDt);
+			return mci.create(count, startDt, endDt, userDomainCnt);
 		}
 		else {
 			return "403";
@@ -162,9 +163,7 @@ public class InviteTabCtrl {
 		Collection<? extends GrantedAuthority> cl = ud.getAuthorities();
 		for (GrantedAuthority ga : cl) {
 			String role = ga.getAuthority();
-			System.out.println(ud.getUsername()+"role:"+role);
 			if(role.indexOf("ADMIN")>=0) {
-				System.out.println("Go to home_admin");
 				return true;
 			}
 		}
