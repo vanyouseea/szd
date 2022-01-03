@@ -7,9 +7,39 @@
 </head>
 <body>
 	<div id="tb10" ></div>
-	<div id="dlg10"></div>
+	<div id="dlg10" class="easyui-dialog" title="编辑DNS记录" style="padding:10px" data-options="iconCls: 'icon-massadd',modal : true,closed : true,width: 400,height: 300,cache: false">
+		<table style="padding:10px">
+			<tr>
+				<td >子域前缀：</td>
+				<td><input id="prefix2" class="easyui-textbox"  data-options="required:true,disabled:true" style="width: 245px" ></td>
+			</tr>
+			<tr>
+				<td >类型：</td>
+				<td><input class="easyui-textbox" id="type2" value="A" data-options="required:true,disabled:true" style="width: 245px" ></td>
+			</tr>
+			<tr>
+				<td >当前域名：</td>
+				<td><input id="curDomain2" class="easyui-textbox" data-options="required:true,disabled:true" style="width: 245px" ></td>
+			</tr>
+			<tr>
+				<td >IP地址：</td>
+				<td><input id="ip2" class="easyui-textbox" data-options="required:true" style="width: 245px" ></td>
+			</tr>
+			<tr>
+				<td>是否代理：</td>
+				<td><input class="easyui-checkbox" id="proxied2" name="proxied2" ></td>
+			</tr>
+			<tr><td colspan="2"></td></tr>
+			<tr>
+				<td colspan="2" align="right">
+					<a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitDns3()" style="width:80px">确认</a>
+					<a href="javascript:void(0)" class="easyui-linkbutton" onclick="closeTab3()" style="width:80px">取消</a>
+				</td>
+			</tr>
+		</table>
+	</div>
 	<script type="text/javascript" th:inline="none">
-		var row;
+		var row10;
 		$('#tb10').datagrid({
 			border:false,
 			fit:true,
@@ -24,16 +54,47 @@
 			url:'/getMyDomains',
 			method:'post',
 			toolbar: [{
+				text:'编辑',
+				iconCls:'icon-edit',
+				handler:function(){
+					row10 = $('#tb10').datagrid('getSelections');
+					if(row10!=null&&row10.length==1){
+						$('#prefix2').textbox('setText',row10[0].prefix);
+						$('#type2').textbox('setText',row10[0].type);
+						$('#ip2').textbox('setText',row10[0].ip);
+						$('#curDomain2').textbox('setText',row10[0].curDomain);
+						if(row10[0].proxied==0){
+							$('#proxied2').checkbox({
+								checked:false
+							});
+						}
+						else{
+							$('#proxied2').checkbox({
+								checked:true
+							});
+						}
+						$('#dlg10').dialog('open');
+					}
+					else{
+						$.messager.show({
+							title:'错误',
+							msg:'请选择一行',
+							timeout:2000,
+							showType:'slide'
+						});
+					}
+				}
+			},{
 				text:'删除',
 				iconCls:'icon-remove',
 				handler:function(){
-					row = $('#tb10').datagrid('getSelections');
-					if(row!=null&&row.length>0){
+					row10 = $('#tb10').datagrid('getSelections');
+					if(row10!=null&&row10.length>0){
 						var seqNos = '';
-						for(var rr of row){
+						for(var rr of row10){
 							seqNos = seqNos + rr.seqNo + ',';
 						}
-						$.messager.confirm('删除解析', '将删除'+row.length+'条CF解析但这并<font color=red>不会减少</font>你持有的子域数量，你确定吗', function(r){
+						$.messager.confirm('删除解析', '将删除'+row10.length+'条CF解析但这并<font color=red>不会减少</font>你持有的子域数量，你确定吗', function(r){
 							if (r){
 								$.ajax({
 								    type : "POST", 
@@ -59,7 +120,7 @@
 								});
 							}
 						});
-						row = null;
+						row10 = null;
 					}
 					else{
 						$.messager.show({
@@ -101,6 +162,7 @@
 						}
 					}	
 				},
+				{field : 'curDomain',title : '域名',align : 'center',sortable:true},
 				{field : 'createDt',title : '创建时间',align : 'center',sortable:true,
 					formatter: function(value,row,index){
 						if(value==null||value==''){
@@ -121,6 +183,61 @@
 				$('#tb10').datagrid('loadData',{'total':0,'rows':[]});
             }
 		});
+		
+		function submitDns3(){
+			var prefix2 = $('#prefix2').textbox('getText');
+			var type2 = $('#type2').textbox('getText');
+			var ip2 = $('#ip2').textbox('getText');
+			var curDomain2 = $('#curDomain2').textbox('getText');
+			var proxied2 = false;
+			$('input:checkbox[name=proxied2]:checked').each(function(i){
+				//if found, then checked
+				proxied2 = true;
+			});
+			console.log(prefix2+"|"+ip2+"|"+proxied2+"|"+row10[0].seqNo);
+			if (prefix2 == '' || ip2 == ''  ){
+				$.messager.alert('缺少参数','请填写所有的必须项','error'); 
+				return;
+			}
+			$.ajax({
+				type1 : 'POST', 
+				url : '/updateMyDnsRecords',
+				data : { 'seqNo': row10[0].seqNo, 'domainSeqNo': row10[0].domainSeqNo , 'prefix': prefix2 , 'type' : type2, 'ip' : ip2, 'proxied': proxied2, 'curDomain':curDomain2 },
+				success : function(res) {
+					if(res==''){
+						$.messager.show({
+							title:'成功',
+							msg:'DNS记录已更新',
+							timeout:3000,
+							showType:'slide'
+						});
+					}
+					else{
+						$.messager.show({
+							title:'失败',
+							msg:res,
+							timeout:3000,
+							showType:'slide'
+						});
+					}
+					$('#tb10').datagrid('reload');
+				},
+				error : function(){
+			       	$.messager.show({
+						title:'失败',
+						msg:'更新失败，请重试',
+						timeout:2000,
+						showType:'slide'
+					}); 
+				}
+			});
+			row10 = null;
+			$('#dlg10').dialog('close');
+		}
+		
+		function closeTab3(){
+			$('#dlg10').dialog('close');
+		}
 		
 		function dateFormat(fmt, date) {
 		    let ret;

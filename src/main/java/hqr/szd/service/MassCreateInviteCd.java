@@ -24,7 +24,7 @@ public class MassCreateInviteCd {
 	private SimpleDateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@CacheEvict(value="cacheInviteInfo", allEntries = true)
-	public String create(int count, String startDt, String endDt) {
+	public String create(int count, String startDt, String endDt, int userDomainCnt) {
 		String result = "";
 		
 		for(int i=0;i<count;i++) {
@@ -41,6 +41,7 @@ public class MassCreateInviteCd {
 				} catch (ParseException e) {}
 			}
 			enti.setInviteStatus("1");
+			enti.setUserDomainCnt(userDomainCnt);
 			tii.save(enti);
 		}
 		tii.flush();

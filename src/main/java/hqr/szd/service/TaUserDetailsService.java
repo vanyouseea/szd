@@ -21,7 +21,6 @@ public class TaUserDetailsService implements UserDetailsService{
 		TaUser taUser = tup.getUserById(username);
 		
 		if(taUser!=null) {
-			System.out.println("User role is "+taUser.getAcctRole());
 			if("9".equals(taUser.getAcctRole())) {
 				return new User(username, taUser.getPasswd(),AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_ADMIN"));
 			}

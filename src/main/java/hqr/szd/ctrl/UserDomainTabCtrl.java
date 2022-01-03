@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import hqr.szd.service.DeleteUserDnsRecords;
 import hqr.szd.service.GetUserDomainMapInfo;
+import hqr.szd.service.UpdateUserDomainMapInfo;
 
 @Controller
 public class UserDomainTabCtrl {
@@ -21,22 +22,22 @@ public class UserDomainTabCtrl {
 	@Autowired
 	private DeleteUserDnsRecords dnr;
 	
+	@Autowired
+	private UpdateUserDomainMapInfo uudm;
+	
 	@RequestMapping(value = {"/tabs/userdomain.html"})
 	public String dummy() {
-		return "tabs/userdomain";
+		if(hasAccess()) {
+			return "tabs/userdomain";
+		}
+		else {
+			return "error/403";
+		}
 	}
 	
 	@ResponseBody
 	@RequestMapping(value = {"/getUserDomains"})
 	public String getUserDomains(String page, String rows) {
-		
-		UserDetails ud = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Collection<? extends GrantedAuthority>  cl = ud.getAuthorities();
-		System.out.println("Req user is "+ud.getUsername());
-		for (GrantedAuthority grantedAuthority : cl) {
-			System.out.println("Role is "+grantedAuthority.getAuthority());
-		}
-		
 		int intPage = 1;
 		int intRows = 100;
 		try {
@@ -52,13 +53,51 @@ public class UserDomainTabCtrl {
 			System.out.println("Invalid row, force it to 100");
 		}
 
-		return gdmi.getUserDnsRecords(intPage, intRows);
+		if(hasAccess()) {
+			return gdmi.getUserDnsRecords(intPage, intRows);
+		}
+		else {
+			return "403";
+		}
 	}
 	
 	@ResponseBody
 	@RequestMapping(value = {"/deleteUserDnsRecords"})
-	public void deleteDnsRecords(@RequestParam(name="seqNos") String seqNos) {
-		dnr.deleteRecords(seqNos);
+	public String deleteUserDnsRecords(@RequestParam(name="seqNos") String seqNos) {
+		if(hasAccess()) {
+			return dnr.deleteRecords(seqNos);
+		}
+		else {
+			return "403";
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = {"/updateUserDnsRecords"})
+	public String updateUserDnsRecords(@RequestParam(name="seqNo") int seqNo,
+			@RequestParam(name="prefix") String prefix,
+			@RequestParam(name="type") String type,
+			@RequestParam(name="ip") String ip,
+			@RequestParam(name="proxied") boolean proxied) {
+		type = "A";
+		if(hasAccess()) {
+			return uudm.updateDnsRecords(seqNo, prefix, type, ip, proxied);
+		}
+		else {
+			return "403";
+		}
+	}
+	
+	private boolean hasAccess() {
+		UserDetails ud = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Collection<? extends GrantedAuthority> cl = ud.getAuthorities();
+		for (GrantedAuthority ga : cl) {
+			String role = ga.getAuthority();
+			if(role.indexOf("ADMIN")>=0) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }

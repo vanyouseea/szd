@@ -46,6 +46,7 @@
 			var prefix = $('#prefix').textbox('getText');
 			var type = $('#type').textbox('getText');
 			var ip = $('#ip').textbox('getText');
+			var currDomain = $('#currDomain').textbox('getText');
 			var proxied = false;
 			$('input:checkbox[name=proxied]:checked').each(function(i){
 				//if found, then checked
@@ -59,7 +60,7 @@
 			$.ajax({
 				type : 'POST', 
 				url : '/updateMyDnsRecords',
-				data : { 'domainSeqNo': row8[0].seqNo , 'prefix': prefix , 'type' : type, 'ip' : ip, 'proxied': proxied },
+				data : { 'domainSeqNo': row8[0].seqNo , 'prefix': prefix , 'type' : type, 'ip' : ip, 'proxied': proxied, 'curDomain': currDomain},
 				success : function(result) {
 					if ( result=='' ) {
 						$.messager.show({

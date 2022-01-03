@@ -9,15 +9,19 @@
 	<table style="padding:10px">
 		<tr>
 			<td >数量：</td>
-			<td colSpan="2"><input id="count2" class="easyui-textbox" value="1" data-options="required:true" style="width: 310px" ></td>
+			<td colSpan="2"><input id="count2" class="easyui-textbox" value="1" data-options="required:true" style="width: 260px" ></td>
 		</tr>
 		<tr>
-			<td >开始：</td>
-			<td colSpan="2"><input id="startDt" class="easyui-datebox" data-options="formatter:myformatter" style="width: 310px" ></td>
+			<td >子域个数：</td>
+			<td colSpan="2"><input id="userDomainCnt" class="easyui-textbox" value="1" data-options="required:true" style="width: 260px" ></td>
 		</tr>
 		<tr>
-			<td >截至：</td>
-			<td colSpan="2"><input id="endDt" class="easyui-datebox"  data-options="formatter:myformatter" style="width: 310px" ></td>
+			<td >生效时间：</td>
+			<td colSpan="2"><input id="startDt" class="easyui-datebox" data-options="formatter:myformatter" style="width: 260px" ></td>
+		</tr>
+		<tr>
+			<td >失效时间：</td>
+			<td colSpan="2"><input id="endDt" class="easyui-datebox"  data-options="formatter:myformatter" style="width: 260px" ></td>
 		</tr>
 		<tr>
 			<td colspan="3" align="right">
@@ -39,7 +43,7 @@
 			var count2 = $('#count2').val();
 			var startDt = $('#startDt').val();
 			var endDt = $('#endDt').val();
-			
+			var userDomainCnt = $('#userDomainCnt').val();
 			console.log('info:'+count2+","+startDt+","+endDt);
 			
 			if(count2==''){
@@ -56,7 +60,7 @@
 			$.ajax({
 			    type : "POST", 
 			    url : "/massCreateInviteCd",
-			    data : { "count": count2, "startDt": startDt, "endDt": endDt },
+			    data : { "count": count2, "startDt": startDt, "endDt": endDt, "userDomainCnt":userDomainCnt },
 			    success : function(result) {
 			      	$.messager.show({
 						title:'结果',

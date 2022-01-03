@@ -13,6 +13,8 @@ public class SzdDomain {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int seqNo;
 	private String shared = "否";
+	//if not set, 0 belongs to admin
+	private int userSeqNo = 0;
 	private String subZoneId;
 	private String subZone;
 	private String zoneId;
@@ -29,6 +31,12 @@ public class SzdDomain {
 	}
 	public void setShared(String shared) {
 		this.shared = shared;
+	}
+	public int getUserSeqNo() {
+		return userSeqNo;
+	}
+	public void setUserSeqNo(int userSeqNo) {
+		this.userSeqNo = userSeqNo;
 	}
 	public String getSubZoneId() {
 		return subZoneId;

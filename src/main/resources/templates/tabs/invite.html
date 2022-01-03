@@ -19,7 +19,7 @@
 			modal : true,
 			closed : true,
 			width: 420,
-			height: 215,
+			height: 245,
 		    cache: false,
 		    href: 'tabs/dialogs/createInviteCd.html'
 		});
@@ -135,6 +135,7 @@
 						}
 					}	
 				},
+				{field : 'userDomainCnt',title : '允许子域数',align : 'center',sortable:true },
 				{field : 'inviteStatus',title : '状态',align : 'center',sortable:true,
 					formatter: function(value,row,index){
 						if(value=='1'){
