@@ -1,7 +1,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8">
-	<title>二级域名分发系统</title>
+	<title>次级域名分发系统</title>
 	<link rel="stylesheet" id="easyuiTheme" href="jquery-easyui-1.9.14/themes/default/easyui.css" />
 	<link rel="stylesheet" href="jquery-easyui-1.9.14/themes/icon.css" />
 	<script type="text/javascript" src="jquery-easyui-1.9.14/jquery.min.js" th:inline="none"></script>
@@ -57,47 +57,21 @@
 	</div>
 	<div id="acc" class="easyui-tabs" data-options="region:'center'">
 		<div title="首页" style="padding:10px">
-			<h2>欢迎来到二级域名分发系统，你可以方便的使用他来分享你的域名给其他注册用户</h2>
+			<h2>欢迎来到次级域名分发系统，你可以方便的使用他来分享你的域名给其他的注册用户</h2>
 			<ul style="font-size: 15px">
-				<li>如果你是<font color="red">首次使用</font>，请先前往[配置]-><a href=javascript:addPanel("Cloudflare配置")>Cloudflare配置</a>配置你的APP信息，如果你不知道如何创建APP，请参考<a href="https://github.com/vanyouseea/msautocreate" target="_blank" >GitHub</a></li>
-				<li>请确保APP开启以下API的<font color="red">应用程序</font>权限(缺少部分权限亦可使用，只是对应的功能无法执行成功)
-					<table style="font-size: 13px">
-						<tr>
-							<td><font color="blue">Application.ReadWrite.All</font></td>
-							<td>用于新增密钥的功能</td>
-						</tr>
-						<tr>
-							<td><font color="blue">Application.ReadWrite.OwnedBy</font></td>
-							<td>用于新增密钥的功能</td>
-						</tr>						
-						<tr>
-							<td><font color="blue">Directory.ReadWrite.All</font></td>
-							<td>用于订阅，域名，用户管理的功能</td>
-						</tr>
-						<tr>
-							<td><font color="blue">RoleManagement.ReadWrite.Directory</font></td>
-							<td>用于特权角色的管理</td>
-						</tr>
-						<tr>
-							<td><font color="blue">User.ManageIdentities.All</font></td>
-							<td>用于用户的管理</td>
-						</tr>
-						<tr>
-							<td><font color="blue">User.ReadWrite.All</font></td>
-							<td>用于用户的管理</td>
-						</tr>						
-						<tr>
-							<td><font color="blue">Reports.Read.All</font></td>
-							<td>用于生成Onedrive,Exchange详细报告</td>
-						</tr>
-					</table>
+				<li><b>可持有子域数/最大子域数:</b> <font color="red">0</font>/<font color="green">10</font></li>
+				<li>如果您是<font color="red">首次使用</font>，请先前往[配置]-><a href=javascript:addPanel("系统配置")>系统配置</a>配置你的CF邮箱(CF_AUTH_EMAIL)和个人资料中的api-token(CF_AUTH_KEY)</li>
+				<li>此步可选，不过为了管理员账号的安全，我们强烈建议您前往 [配置]-><a href=javascript:addPanel("系统配置")>系统配置</a>页中配置好以下6个变量，请参考 <a href="https://github.com/vanyouseea/o365/raw/master/docs/%E9%85%8D%E7%BD%AE%E5%BE%AE%E4%BF%A1%E5%93%8D%E5%BA%94.docx">此文档</a>
+				<br>WX_CALLBACK_IND<br>WX_CALLBACK_TOKEN<br>WX_CORPID<br>WX_CORPSECRET<br>WX_AGENTID<br>WX_CALLBACK_AESKEY
 				</li>
-				<li>[用户]-><a href=javascript:addPanel("管理用户")>管理用户</a>页中，你可以批量添加(分配订阅)，删除，启用，禁用用户，搜索用户，你也可以提升一个用户为管理员或者撤销他的管理员权限</li>
-				<li>[用户]-><a href=javascript:addPanel("查看特权用户")>查看特权用户</a>页中，你可以查看身份是全局管理，用户管理，特权角色管理，特权认证管理的特殊用户</li>
-				<li>[用户]-><a href=javascript:addPanel("邀请注册")>邀请注册</a>页中，你可以生成邀请码，其他人可根据此邀请码通过<a href="/refer.html" target="_blank">此连接</a>注册Office用户，同时你也可以管理邀请码</li>
-				<li>[配置和报告]-><a href=javascript:addPanel("域名管理")>域名管理</a>页中，你可以查看Cloudflare配置中全局管理员和SPO的可用性报告，同时你也可以选择一个全局下载其更为详细的Exchange和Onedrive使用报告</li>
-				<li>[配置和报告]-><a href=javascript:addPanel("系统配置")>系统配置</a>页中，你可以添加，查看或修改各种系统配置，包含但不限于订阅中文名的翻译的添加和修改</li>
-				<li>如果你有任何意见和建议，欢迎给我提<a href="https://github.com/vanyouseea/o365/issues/new">issue</a></li>
+				<li>[配置]-><a href=javascript:addPanel("域名管理")>域名管理</a>页中，点击按钮从CF拉取，可以获取到所有在CF的域名/子域名，你可以只留下需要共享的域名/子域名，选中需要分享的域名域名/子域名点击分享/取消即可分享/取消域名/子域名<br>
+				PS: <font color="red">从CF拉取可能会花一些时间，请耐心等待</font></li>
+				<li>当管理员分享了域名后，用户就可以在[我的]-><a href=javascript:addPanel("可用域名")>可用域名</a>页中发现被分享的域名，用户就可以基于此域名创建次级域名</li>
+				<li>[我的]-><a href=javascript:addPanel("我的子域")>我的子域</a>页中可以找到用户创建的次级域名</li>
+				<li>[用户]-><a href=javascript:addPanel("管理用户")>管理用户</a>页中可以管理所有的用户</li>
+				<li>[用户]-><a href=javascript:addPanel("管理用户域名")>管理用户域名</a>页中可以管理所有的用户子域信息</li>
+				<li>[用户]-><a href=javascript:addPanel("邀请注册")>邀请注册</a>页中可以创建邀请码，邀请用户注册次级域名分发系统</li>
+				<li>如果你有任何意见和建议，欢迎给我提<a href="https://github.com/vanyouseea/szd/issues/new">issue</a></li>
 			</ul>
 		</div>
 	</div>
