@@ -46,7 +46,8 @@
 		<div title="首页" style="padding:10px">
 			<h2>欢迎来到次级域名分发系统，你可以用它来创建属于你自己的次级域名</h2>
 			<ul style="font-size: 15px">
-				<li><b>可持有子域数/最大子域数:</b> <font color="red">0</font>/<font color="green">1</font></li>
+				<li><b>可持有子域数/最大子域数:</b> <span id="curSubDomain2" style="color: red">1</span>/<span id="maxSubDomain2" style="color: green">3</span>
+				<a href=javascript:getSubDomainInfo2()><img src="jquery-easyui-1.9.14/themes/icons/reload2.png"/></a></li>
 				<li>[我的]-><a href=javascript:addPanel("可用域名")>可用域名</a>页中可以查看管理员分享的域名,你可以创建属于你自己的次级域名</li>
 				<li>[我的]-><a href=javascript:addPanel("我的子域")>我的子域</a>页中可以查看，修改和删除你所持有的次级域名</li>
 				<li>如果你有任何意见和建议，欢迎给我提<a href="https://github.com/vanyouseea/szd/issues/new">issue</a></li>
@@ -56,6 +57,8 @@
 	
 	<script type="text/javascript">
 		new BugController({'minBugs':1, 'maxBugs':1, 'mouseOver':'fly'});
+		
+		
 		
 		function addPanel(name){
 			tab = $('#acc').tabs('getTab',name);
@@ -90,6 +93,39 @@
 		function showVersionInfo(){
 			$.messager.alert('版本信息', '最初的版本' ,'');
 		}
+		
+		function getSubDomainInfo2(){
+			$.ajax({
+			    type : "POST", 
+			    url : "/getSubDomainInfo",
+			    success : function(res) {
+			    	var strs = res.split("|");
+			    	var curSubDomain2 = strs[0];
+			    	var maxSubDomain2 = strs[1];
+			    	$('#curSubDomain2').text(curSubDomain2);
+			    	$('#maxSubDomain2').text(maxSubDomain2);
+				},
+				error : function(){
+			    	$('#curSubDomain2').text("NA");
+			    	$('#maxSubDomain2').text("NA"); 	
+				}							
+			});
+		}
+		$.ajax({
+		    type : "POST", 
+		    url : "/getSubDomainInfo",
+		    success : function(res) {
+		    	var strs = res.split("|");
+		    	var curSubDomain2 = strs[0];
+		    	var maxSubDomain2 = strs[1];
+		    	$('#curSubDomain2').text(curSubDomain2);
+		    	$('#maxSubDomain2').text(maxSubDomain2);
+			},
+			error : function(){
+		    	$('#curSubDomain2').text("NA");
+		    	$('#maxSubDomain2').text("NA"); 	
+			}							
+		});
 		
 	</script>
 </body>

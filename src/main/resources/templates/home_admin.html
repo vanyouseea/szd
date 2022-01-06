@@ -59,7 +59,8 @@
 		<div title="首页" style="padding:10px">
 			<h2>欢迎来到次级域名分发系统，你可以方便的使用他来分享你的域名给其他的注册用户</h2>
 			<ul style="font-size: 15px">
-				<li><b>可持有子域数/最大子域数:</b> <font color="red">0</font>/<font color="green">10</font></li>
+				<li><b>可持有子域数/最大子域数:</b> <span id="curSubDomain1" style="color: red">0</span>/<span id="maxSubDomain1" style="color: green">10</span>
+				<a href=javascript:getSubDomainInfo1()><img src="jquery-easyui-1.9.14/themes/icons/reload2.png"/></a></li>
 				<li>如果您是<font color="red">首次使用</font>，请先前往[配置]-><a href=javascript:addPanel("系统配置")>系统配置</a>配置你的CF邮箱(CF_AUTH_EMAIL)和个人资料中的api-token(CF_AUTH_KEY)</li>
 				<li>此步可选，不过为了管理员账号的安全，我们强烈建议您前往 [配置]-><a href=javascript:addPanel("系统配置")>系统配置</a>页中配置好以下6个变量，请参考 <a href="https://github.com/vanyouseea/o365/raw/master/docs/%E9%85%8D%E7%BD%AE%E5%BE%AE%E4%BF%A1%E5%93%8D%E5%BA%94.docx">此文档</a>
 				<br>WX_CALLBACK_IND<br>WX_CALLBACK_TOKEN<br>WX_CORPID<br>WX_CORPSECRET<br>WX_AGENTID<br>WX_CALLBACK_AESKEY
@@ -153,6 +154,38 @@
 			$.messager.alert('版本信息', '最初的版本' ,'');
 		}
 		
+		function getSubDomainInfo1(){
+			$.ajax({
+			    type : "POST", 
+			    url : "/getSubDomainInfo",
+			    success : function(res) {
+			    	var strs = res.split("|");
+			    	var curSubDomain1 = strs[0];
+			    	var maxSubDomain1 = strs[1];
+			    	$('#curSubDomain1').text(curSubDomain1);
+			    	$('#maxSubDomain1').text(maxSubDomain1);
+				},
+				error : function(){
+			    	$('#curSubDomain1').text("NA");
+			    	$('#maxSubDomain1').text("NA"); 	
+				}							
+			});
+		}
+		$.ajax({
+		    type : "POST", 
+		    url : "/getSubDomainInfo",
+		    success : function(res) {
+		    	var strs = res.split("|");
+		    	var curSubDomain1 = strs[0];
+		    	var maxSubDomain1 = strs[1];
+		    	$('#curSubDomain1').text(curSubDomain1);
+		    	$('#maxSubDomain1').text(maxSubDomain1);
+			},
+			error : function(){
+		    	$('#curSubDomain1').text("NA");
+		    	$('#maxSubDomain1').text("NA"); 	
+			}							
+		});
 	</script>
 </body>
 </html>
