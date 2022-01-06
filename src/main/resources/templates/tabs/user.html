@@ -39,23 +39,17 @@
 					if(row3!=null&&row3.length>0){
 						var uids = '';
 						for(var rr of row3){
-							uids = uids + rr.id + ',';
+							uids = uids + rr.seqNo + ',';
 						}
-						var accountEnabled = "true";
-				       	$.messager.show({
-							title:'提示',
-							msg: '启用用户请求已提交，完成的速度会根据用户数量的多少决定，完成时右下角会出现弹窗提醒',
-							timeout:3000,
-							showType:'slide'
-						}); 
+						var accountEnabled = true;
 						$.ajax({
 						    type : "POST", 
-						    url : "/updateOfficeUser",
-						    data : { "uids": uids , "accountEnabled" : accountEnabled},
-						    success : function(result) {
+						    url : "/updateUserStatus",
+						    data : { "uids": uids , "status" : accountEnabled},
+						    success : function() {
 						       	$.messager.show({
 									title:'提示',
-									msg: result,
+									msg: '启用用户已成功',
 									timeout:3000,
 									showType:'slide'
 								}); 
@@ -89,23 +83,17 @@
 					if(row3!=null&&row3.length>0){
 						var uids = '';
 						for(var rr of row3){
-							uids = uids + rr.id + ',';
+							uids = uids + rr.seqNo + ',';
 						}
-						var accountEnabled = "false";
-				       	$.messager.show({
-							title:'提示',
-							msg: '禁用用户请求已提交，完成的速度会根据用户数量的多少决定，完成时右下角会出现弹窗提醒',
-							timeout:3000,
-							showType:'slide'
-						}); 
+						var accountEnabled = false;
 						$.ajax({
 						    type : "POST", 
-						    url : "/updateOfficeUser",
-						    data : { "uids": uids , "accountEnabled" : accountEnabled},
-						    success : function(result) {
+						    url : "/updateUserStatus",
+						    data : { "uids": uids , "status" : accountEnabled},
+						    success : function() {
 						       	$.messager.show({
 									title:'提示',
-									msg: result,
+									msg: '禁用用户成功，请注意禁用用户并不会删除其CF解析',
 									timeout:3000,
 									showType:'slide'
 								}); 
@@ -150,7 +138,6 @@
 						}
 					}
 				}, 
-				//{field : 'id',title : 'UID',align : 'center'}, 
 				{field : 'seqNo',title : '用户编号',align : 'center',sortable:true}, 
 				{field : 'userId',title : '用户名',align : 'center',sortable:true}, 
 				{field : 'passwd',title : '密码',align : 'center',sortable:true},
