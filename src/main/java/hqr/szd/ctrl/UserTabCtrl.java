@@ -8,14 +8,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import hqr.szd.service.GetUserInfo;
+import hqr.szd.service.UpdateUser;
 
 @Controller
 public class UserTabCtrl {
 	
 	@Autowired
 	private GetUserInfo gi;
+	
+	@Autowired
+	private UpdateUser uu;
 	
 	@RequestMapping(value = {"/tabs/user.html"})
 	public String dummy() {
@@ -50,6 +55,14 @@ public class UserTabCtrl {
 		}
 		else {
 			return "403";
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = {"/updateUserStatus"})
+	public void updateUserStatus(@RequestParam(name="uids") String uids,@RequestParam(name="status") boolean status) {
+		if(hasAccess()) {
+			uu.enableDisableUser(uids, status);
 		}
 	}
 	

@@ -143,10 +143,7 @@
 				text:'帮助',
 				iconCls:'icon-help',
 				handler:function(){
-					$.messager.alert('帮助','<font color=red>特别提示</font> CF不支持以API的方式设置免费域名(如.tk,.gq,.ml等)的二级域名<br>'+
-							'<b>从CF拉取</b> 在系统配置中设置好CF_AUTH_EMAIL和CF_AUTH_EMAIL后可以点击它来获取你在CF所有A类记录，一般只需要执行一次即可<br>'+
-							'<b>分享/取消</b> 表示分享/取消此子域名/域名给其他用户使用<br>'+
-							'<b>删除</b> 仅仅是删除在系统里面的A类记录，此改动不会影响到CF<br>','');
+					$.messager.alert('帮助','<b>1.</b> 如果管理员分享了域名，你就可以创建属于你自己的子域了','');
 				}
 			}],
 			columns : [[

@@ -1,7 +1,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8">
-	<title>二级域名分发系统</title>
+	<title>次级域名分发系统</title>
 	<link rel="stylesheet" id="easyuiTheme" href="jquery-easyui-1.9.14/themes/default/easyui.css" />
 	<link rel="stylesheet" href="jquery-easyui-1.9.14/themes/icon.css" />
 	<script type="text/javascript" src="jquery-easyui-1.9.14/jquery.min.js" th:inline="none"></script>
@@ -11,7 +11,7 @@
 	<script type='text/javascript' src='changeEasyuiTheme.js'></script>
 </head>
 <body class="easyui-layout" data-options="fit:true">
-<a href="https://github.com/vanyouseea/o365"><img width="128" height="128" src="/forkme2.png" alt="Fork me on GitHub" data-recalc-dims="1" style="position: absolute; top: 0;z-index: 999999;right: 0"></a>
+<a href="https://github.com/vanyouseea/szd"><img width="128" height="128" src="/forkme2.png" alt="Fork me on GitHub" data-recalc-dims="1" style="position: absolute; top: 0;z-index: 999999;right: 0"></a>
 	<div data-options="region:'north',border:false" style="height:60px;background:#B3DFDA;">
 		<h3><img src="logo.svg" /></h3> 
 	</div>
@@ -25,7 +25,7 @@
 		    </div>		    
 		</div>
 	</div>
-	<div data-options="region:'south',border:false" style="height:25px;background:#A9FACD" ><div style="float:left">Powered by hqr - O365 <a href=javascript:showVersionInfo()>v1.7.1</a></div> 
+	<div data-options="region:'south',border:false" style="height:25px;background:#A9FACD" ><div style="float:left">Powered by hqr - Szd <a href=javascript:showVersionInfo()>v1.0.0</a></div> 
 		<div style="float:right">主题选择 <select id="themeCb" class="easyui-combobox" style="width:120px;height:25px" data-options="editable:false,onChange: onchangeThemeFun" >
 					<option value="default">默认</option>
 				    <option value="gray">灰色</option>
@@ -44,52 +44,17 @@
 	</div>
 	<div id="acc" class="easyui-tabs" data-options="region:'center'">
 		<div title="首页" style="padding:10px">
-			<h2>欢迎来到二级域名分发系统，你可以方便的使用他来分享你的域名给其他注册用户</h2>
+			<h2>欢迎来到次级域名分发系统，你可以用它来创建属于你自己的次级域名</h2>
 			<ul style="font-size: 15px">
-				<li>如果你是<font color="red">首次使用</font>，请先前往[配置]-><a href=javascript:addPanel("Cloudflare配置")>Cloudflare配置</a>配置你的APP信息，如果你不知道如何创建APP，请参考<a href="https://github.com/vanyouseea/msautocreate" target="_blank" >GitHub</a></li>
-				<li>请确保APP开启以下API的<font color="red">应用程序</font>权限(缺少部分权限亦可使用，只是对应的功能无法执行成功)
-					<table style="font-size: 13px">
-						<tr>
-							<td><font color="blue">Application.ReadWrite.All</font></td>
-							<td>用于新增密钥的功能</td>
-						</tr>
-						<tr>
-							<td><font color="blue">Application.ReadWrite.OwnedBy</font></td>
-							<td>用于新增密钥的功能</td>
-						</tr>						
-						<tr>
-							<td><font color="blue">Directory.ReadWrite.All</font></td>
-							<td>用于订阅，域名，用户管理的功能</td>
-						</tr>
-						<tr>
-							<td><font color="blue">RoleManagement.ReadWrite.Directory</font></td>
-							<td>用于特权角色的管理</td>
-						</tr>
-						<tr>
-							<td><font color="blue">User.ManageIdentities.All</font></td>
-							<td>用于用户的管理</td>
-						</tr>
-						<tr>
-							<td><font color="blue">User.ReadWrite.All</font></td>
-							<td>用于用户的管理</td>
-						</tr>						
-						<tr>
-							<td><font color="blue">Reports.Read.All</font></td>
-							<td>用于生成Onedrive,Exchange详细报告</td>
-						</tr>
-					</table>
-				</li>
-				<li>[用户]-><a href=javascript:addPanel("管理用户")>管理用户</a>页中，你可以批量添加(分配订阅)，删除，启用，禁用用户，搜索用户，你也可以提升一个用户为管理员或者撤销他的管理员权限</li>
-				<li>[用户]-><a href=javascript:addPanel("查看特权用户")>查看特权用户</a>页中，你可以查看身份是全局管理，用户管理，特权角色管理，特权认证管理的特殊用户</li>
-				<li>[用户]-><a href=javascript:addPanel("邀请注册")>邀请注册</a>页中，你可以生成邀请码，其他人可根据此邀请码通过<a href="/refer.html" target="_blank">此连接</a>注册Office用户，同时你也可以管理邀请码</li>
-				<li>[配置和报告]-><a href=javascript:addPanel("域名管理")>域名管理</a>页中，你可以查看Cloudflare配置中全局管理员和SPO的可用性报告，同时你也可以选择一个全局下载其更为详细的Exchange和Onedrive使用报告</li>
-				<li>[配置和报告]-><a href=javascript:addPanel("系统配置")>系统配置</a>页中，你可以添加，查看或修改各种系统配置，包含但不限于订阅中文名的翻译的添加和修改</li>
-				<li>如果你有任何意见和建议，欢迎给我提<a href="https://github.com/vanyouseea/o365/issues/new">issue</a></li>
+				<li><b>可持有子域数/最大子域数:</b> <font color="red">0</font>/<font color="green">1</font></li>
+				<li>[我的]-><a href=javascript:addPanel("可用域名")>可用域名</a>页中可以查看管理员分享的域名,你可以创建属于你自己的次级域名</li>
+				<li>[我的]-><a href=javascript:addPanel("我的子域")>我的子域</a>页中可以查看，修改和删除你所持有的次级域名</li>
+				<li>如果你有任何意见和建议，欢迎给我提<a href="https://github.com/vanyouseea/szd/issues/new">issue</a></li>
 			</ul>
 		</div>
 	</div>
 	
-	<script type="text/javascript"  >
+	<script type="text/javascript">
 		new BugController({'minBugs':1, 'maxBugs':1, 'mouseOver':'fly'});
 		
 		function addPanel(name){

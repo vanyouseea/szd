@@ -21,11 +21,17 @@ public class TaUserDetailsService implements UserDetailsService{
 		TaUser taUser = tup.getUserById(username);
 		
 		if(taUser!=null) {
-			if("9".equals(taUser.getAcctRole())) {
-				return new User(username, taUser.getPasswd(),AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_ADMIN"));
+			if(taUser.getAcctStatus()==0) {
+				System.out.println("User has been disabled");
+				return null;
 			}
 			else {
-				return new User(username, taUser.getPasswd(),AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_NORMAL"));
+				if("9".equals(taUser.getAcctRole())) {
+					return new User(username, taUser.getPasswd(),AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_ADMIN"));
+				}
+				else {
+					return new User(username, taUser.getPasswd(),AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_NORMAL"));
+				}
 			}
 		}
 		else {
