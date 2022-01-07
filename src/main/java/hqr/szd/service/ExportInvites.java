@@ -19,7 +19,7 @@ public class ExportInvites {
 	public boolean exportInvite(){
 		boolean flag = false;
 		try(BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("export_invite_info.csv"), "GB2312"))){
-			bw.write("邀请码,生效时间,失效时间,状态,结果"+System.getProperty("line.separator"));
+			bw.write("邀请码,生效时间,失效时间,允许子域数,状态,结果"+System.getProperty("line.separator"));
 			
 			List<SzdInviteInfo> list = tii.findAll();
 			for (SzdInviteInfo en : list) {
@@ -27,6 +27,7 @@ public class ExportInvites {
 				sb.append(en.getInviteId()).append(",");
 				sb.append(en.getStartDt()).append(",");
 				sb.append(en.getEndDt()).append(",");
+				sb.append(en.getUserDomainCnt()).append(",");
 				sb.append(en.getInviteStatus()).append(",");
 				sb.append(en.getResult()).append(System.getProperty("line.separator"));
 				bw.write(sb.toString());

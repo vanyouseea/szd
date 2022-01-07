@@ -61,6 +61,7 @@
 				type : 'POST', 
 				url : '/updateMyDnsRecords',
 				data : { 'domainSeqNo': row8[0].seqNo , 'prefix': prefix , 'type' : type, 'ip' : ip, 'proxied': proxied, 'curDomain': currDomain},
+				async : false,
 				success : function(result) {
 					if ( result=='' ) {
 						$.messager.show({
@@ -115,7 +116,7 @@
 				}
 			},{
 				text:'新增',
-				iconCls:'icon-sum',
+				iconCls:'icon-add',
 				handler:function(){
 					row8 = $('#tb8').datagrid('getSelections');
 					if(row8!=null&&row8.length>0){
