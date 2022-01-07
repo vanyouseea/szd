@@ -61,12 +61,11 @@
 				type : 'POST', 
 				url : '/updateMyDnsRecords',
 				data : { 'domainSeqNo': row8[0].seqNo , 'prefix': prefix , 'type' : type, 'ip' : ip, 'proxied': proxied, 'curDomain': currDomain},
-				async : false,
 				success : function(result) {
 					if ( result=='' ) {
 						$.messager.show({
 							title:'成功',
-							msg:'已成功添加一条记录',
+							msg:'已成功添加一条记录，你可以在[我的]->我的子域中找到刚才新增的记录',
 							timeout:2000,
 							showType:'slide'
 						});
@@ -89,6 +88,7 @@
 					}); 
 				}
 			});
+			$.messager.alert('提示','请求已提交请稍候片刻','info'); 	
 			row8 = null;
 			$('#dlg5').dialog('close');
 		}
