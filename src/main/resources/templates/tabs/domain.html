@@ -24,7 +24,7 @@
 			method:'post',
 			toolbar: [{
 				text:'从CF拉取',
-				iconCls:'icon-reload',
+				iconCls:'icon-cf',
 				handler:function(){
 					$.ajax({
 						type : 'GET', 
@@ -103,7 +103,7 @@
 				}
 			},{
 				text:'删除',
-				iconCls:'icon-sum',
+				iconCls:'icon-remove',
 				handler:function(){
 					row6 = $('#tb6').datagrid('getSelections');
 					if(row6!=null&&row6.length>0){
@@ -150,7 +150,9 @@
 				handler:function(){
 					$.messager.alert('帮助','<font color=red>特别提示</font> CF不支持以API的方式设置免费域名(如.tk,.gq,.ml等)的次级域名<br>'+
 							'<b>1.</b> 从CF拉取，需要在系统配置中设置好CF_AUTH_EMAIL和CF_AUTH_EMAIL，重复拉取会删除之前拉取的数据，并获得来自CF的最新的数据<br>'+
-							'<b>2.</b> 删除仅仅是删除在系统里面的A类记录，此改动不会影响到CF内的解析<br>','');
+							'<b>2.</b> 当分享域名后，用户可以在[我的]->可用域名中发现此域名<br>'+
+							'<b>3.</b> 如果取消分享，用户无法看到该域名，不过该域名分享时创建的CF解析仍然生效<br>'+
+							'<b>4.</b> 删除仅仅是删除在系统里面的记录，此改动不会影响到CF内的解析，如果想删除用户的CF解析，请前往[用户]->管理用户域名','');
 				}
 			}],
 			columns : [[

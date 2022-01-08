@@ -71,7 +71,7 @@ public class InviteTabCtrl {
 	@RequestMapping(value = {"/getInvite"})
 	public String getInvite(String page, String rows) {
 		int intPage = 1;
-		int intRows = 10;
+		int intRows = 100;
 		try {
 			intPage = Integer.valueOf(page);
 		}
@@ -82,7 +82,7 @@ public class InviteTabCtrl {
 			intRows = Integer.valueOf(rows);
 		}
 		catch (Exception e) {
-			System.out.println("Invalid row, force it to 10");
+			System.out.println("Invalid row, force it to 100");
 		}
 		
 		if(hasAccess()) {

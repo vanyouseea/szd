@@ -11,9 +11,9 @@
 	<script type='text/javascript' src='changeEasyuiTheme.js'></script>
 </head>
 <body class="easyui-layout" data-options="fit:true">
-<a href="https://github.com/vanyouseea/o365"><img width="128" height="128" src="/forkme2.png" alt="Fork me on GitHub" data-recalc-dims="1" style="position: absolute; top: 0;z-index: 999999;right: 0"></a>
-	<div data-options="region:'north',border:false" style="height:60px;background:#B3DFDA;">
-		<h3><img src="logo.svg" /></h3> 
+<a href="https://github.com/vanyouseea/szd"><img width="128" height="128" src="/forkme2.png" alt="Fork me on GitHub" data-recalc-dims="1" style="position: absolute; top: 0;z-index: 999999;right: 0"></a>
+	<div data-options="region:'north',border:false" style="height:60px;background:#B3DFDA;overflow: hidden">
+		<div style="vertical-align: middle;margin-left: 10px"><h2>次级域名分发系统</h2></div>
 	</div>
 	<div data-options="region:'west',split:true,title:'管理'" style="width:260px;padding:2px;">
 		<div id="aa" class="easyui-accordion" style="width:100%;height:220px;">
@@ -38,7 +38,7 @@
 		    </div>
 		</div>
 	</div>
-	<div data-options="region:'south',border:false" style="height:25px;background:#A9FACD" ><div style="float:left">Powered by hqr - O365 <a href=javascript:showVersionInfo()>v1.7.1</a></div> 
+	<div data-options="region:'south',border:false" style="height:25px;background:#A9FACD" ><div style="float:left">Powered by hqr - Szd <a href=javascript:showVersionInfo()>v1.0.0</a></div> 
 		<div style="float:right">主题选择 <select id="themeCb" class="easyui-combobox" style="width:120px;height:25px" data-options="editable:false,onChange: onchangeThemeFun" >
 					<option value="default">默认</option>
 				    <option value="gray">灰色</option>
@@ -59,7 +59,7 @@
 		<div title="首页" style="padding:10px">
 			<h2>欢迎来到次级域名分发系统，你可以方便的使用他来分享你的域名给其他的注册用户</h2>
 			<ul style="font-size: 15px">
-				<li><b>可持有子域数/最大子域数:</b> <span id="curSubDomain1" style="color: red">0</span>/<span id="maxSubDomain1" style="color: green">10</span>
+				<li><b>子域数:</b> <span id="curSubDomain1" style="color: red">0</span>/<span id="maxSubDomain1" style="color: green">10</span>
 				<a href=javascript:getSubDomainInfo1()><img src="jquery-easyui-1.9.14/themes/icons/reload2.png"/></a></li>
 				<li>如果您是<font color="red">首次使用</font>，请先前往[配置]-><a href=javascript:addPanel("系统配置")>系统配置</a>配置你的CF邮箱(CF_AUTH_EMAIL)和个人资料中的api-token(CF_AUTH_KEY)</li>
 				<li>此步可选，不过为了管理员账号的安全，我们强烈建议您前往 [配置]-><a href=javascript:addPanel("系统配置")>系统配置</a>页中配置好以下6个变量，请参考 <a href="https://github.com/vanyouseea/o365/raw/master/docs/%E9%85%8D%E7%BD%AE%E5%BE%AE%E4%BF%A1%E5%93%8D%E5%BA%94.docx">此文档</a>
@@ -71,7 +71,7 @@
 				<li>[我的]-><a href=javascript:addPanel("我的子域")>我的子域</a>页中可以找到用户创建的次级域名</li>
 				<li>[用户]-><a href=javascript:addPanel("管理用户")>管理用户</a>页中可以管理所有的用户</li>
 				<li>[用户]-><a href=javascript:addPanel("管理用户域名")>管理用户域名</a>页中可以管理所有的用户子域信息</li>
-				<li>[用户]-><a href=javascript:addPanel("邀请注册")>邀请注册</a>页中可以创建邀请码，邀请用户注册次级域名分发系统</li>
+				<li>[用户]-><a href=javascript:addPanel("邀请注册")>邀请注册</a>页中可以创建邀请码，邀请用户通过<a href="/refer.html" target="_blank">此连接</a>注册次级域名分发系统</li>
 				<li>如果你有任何意见和建议，欢迎给我提<a href="https://github.com/vanyouseea/szd/issues/new">issue</a></li>
 			</ul>
 		</div>

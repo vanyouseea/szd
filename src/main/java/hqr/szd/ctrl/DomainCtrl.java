@@ -51,7 +51,7 @@ public class DomainCtrl {
 	public String getDomain(String page, String rows) {
 		if(hasAccess()) {
 			int intPage = 1;
-			int intRows = 10;
+			int intRows = 100;
 			try {
 				intPage = Integer.valueOf(page);
 			}
@@ -62,7 +62,7 @@ public class DomainCtrl {
 				intRows = Integer.valueOf(rows);
 			}
 			catch (Exception e) {
-				System.out.println("Invalid row, force it to 10");
+				System.out.println("Invalid row, force it to 100");
 			}
 			
 			return gd.getAllDomainInfo(intRows, intPage);

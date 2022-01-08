@@ -65,7 +65,7 @@
 					if ( result=='' ) {
 						$.messager.show({
 							title:'成功',
-							msg:'已成功添加一条记录',
+							msg:'已成功添加一条记录，你可以在[我的]->我的子域中找到刚才新增的记录',
 							timeout:2000,
 							showType:'slide'
 						});
@@ -88,6 +88,7 @@
 					}); 
 				}
 			});
+			$.messager.alert('提示','请求已提交请稍候片刻','info'); 	
 			row8 = null;
 			$('#dlg5').dialog('close');
 		}
@@ -115,7 +116,7 @@
 				}
 			},{
 				text:'新增',
-				iconCls:'icon-sum',
+				iconCls:'icon-add',
 				handler:function(){
 					row8 = $('#tb8').datagrid('getSelections');
 					if(row8!=null&&row8.length>0){
@@ -143,7 +144,8 @@
 				text:'帮助',
 				iconCls:'icon-help',
 				handler:function(){
-					$.messager.alert('帮助','<b>1.</b> 如果管理员分享了域名，你就可以创建属于你自己的子域了','');
+					$.messager.alert('帮助','<b>1.</b> 如果管理员分享了域名，你就可以创建属于你自己的子域了<br>'+
+							'<b>2.</b> 已经创建好的域名可以在[我的]->我的子域中找到','');
 				}
 			}],
 			columns : [[
