@@ -68,40 +68,56 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
         	if(opt1.isPresent()) {
         		String indicator = opt1.get().getCd();
         		if("Y".equals(indicator)) {
-        			try {
-        				tmc.deleteById("USER_RESPONSE");
-        			}
-        			catch (Exception e) {}
-        			send.sendMsg(remoteIP);
         			
-        			boolean isAllow = false;
-        			for(int i=0;i<60;i++) {
-        				try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {}
-        				Optional<TaMasterCd> opt2 = tmc.findById("USER_RESPONSE");
-        				if(opt2.isPresent()) {
-        					String reply = opt2.get().getCd();
-        					if(reply!=null&&!"".equals(reply)) {
-        						if("Y".equals(reply)) {
-        							isAllow = true;
-        						}
-        						break;
-        					}
-        				}
-        				else {
-        					break;
-        				}
-        			}
-        			//what ever the reply, delete key ty
-        			try {
-        				tmc.deleteById("USER_RESPONSE");
-        			}
-        			catch (Exception e) {}
-        			
-        			if(!isAllow) {
-        				throw new BadCredentialsException("登录未获得批准");
-        			}
+                	boolean checkWxLogin = false;
+            		Collection<? extends GrantedAuthority> cl = userInfo.getAuthorities();
+            		for (GrantedAuthority ga : cl) {
+            			String role = ga.getAuthority();
+            			if(role.indexOf("ADMIN")>=0) {
+            				checkWxLogin = true;
+            			}
+            		}
+            		
+            		if(checkWxLogin) {
+            			System.out.println("Admin user needs to check WX login");
+            			try {
+            				tmc.deleteById("USER_RESPONSE");
+            			}
+            			catch (Exception e) {}
+            			send.sendMsg(remoteIP);
+            			
+            			boolean isAllow = false;
+            			for(int i=0;i<60;i++) {
+            				try {
+    							Thread.sleep(1000);
+    						} catch (InterruptedException e) {}
+            				Optional<TaMasterCd> opt2 = tmc.findById("USER_RESPONSE");
+            				if(opt2.isPresent()) {
+            					String reply = opt2.get().getCd();
+            					if(reply!=null&&!"".equals(reply)) {
+            						if("Y".equals(reply)) {
+            							isAllow = true;
+            						}
+            						break;
+            					}
+            				}
+            				else {
+            					break;
+            				}
+            			}
+            			//what ever the reply, delete key ty
+            			try {
+            				tmc.deleteById("USER_RESPONSE");
+            			}
+            			catch (Exception e) {}
+            			
+            			if(!isAllow) {
+            				throw new BadCredentialsException("登录未获得批准");
+            			}
+            		}
+            		else {
+            			System.out.println("Other user can login directly");
+            		}
         		}
         	}
         }

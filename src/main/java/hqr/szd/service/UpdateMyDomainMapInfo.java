@@ -121,7 +121,7 @@ public class UpdateMyDomainMapInfo {
 					
 					System.out.println("zoneId is "+zoneId+" subzoneId is "+subZoneId+", prefix is "+prefix+", Domain:"+domainEnti.getZone());
 					
-				 	res = udr.update(zoneId, subZoneId,"A", enti.getPrefix(), ip, proxied);
+				 	res = udr.update(zoneId, subZoneId,"A", prefix, ip, proxied);
 				 	
 					//no content means succ
 				 	if("".equals(res)) {
