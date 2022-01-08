@@ -1,6 +1,5 @@
 package hqr.szd.service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,7 +63,26 @@ public class UpdateUserDomainMapInfo {
 				 	}
 				}
 				else {
-					res = "此前缀已存在请重新选择";
+					//res = "此前缀已存在请重新选择";
+					String oldIP = enti.getIp();
+					if(ip.equals(oldIP)) {
+						res = "此前缀/IP已存在请重新选择";
+					}
+					else {
+					 	res = udr.update(zoneId, subZoneId,"A", prefix, ip, proxied);
+					 	
+						//no content means succ
+					 	if("".equals(res)) {
+							enti.setSeqNo(seqNo);
+							enti.setType("A");
+							enti.setIp(ip);
+							enti.setProxied(proxied?1:0);
+							sudmr.saveAndFlush(enti);
+							
+							domainEnti.setSubZone(prefix+"."+domainEnti.getZone());
+							sdr.saveAndFlush(domainEnti);
+					 	}
+					}
 				}
 			}
 			else {

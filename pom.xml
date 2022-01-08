@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>hqr</groupId>
 	<artifactId>szd</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>szd</name>
 	<description>Secondary Zone Distribution system (Based on cloudflare API)</description>
 	<properties>
