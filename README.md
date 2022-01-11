@@ -32,7 +32,7 @@ https://szds.herokuapp.com
 首页中用户可以看见自己所能持有的当前子域数/最大子域数，由于普通用户的界面和管理员有重合，所以接下来着重介绍管理员界面和初始化流程  
 
 ### [配置] -> 系统配置  
-第一次使用请先配置Cloudflare的信息
+第一次使用请先配置Cloudflare的信息，配置好CF信息后就可以使用Szd了  
 ![alt 系统配置](https://github.com/vanyouseea/szd/blob/main/pic/03.PNG)  
   - **CF_AUTH_EMAIL**  
     你的Cloudflare邮件地址  
